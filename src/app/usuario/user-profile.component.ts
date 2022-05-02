@@ -36,13 +36,14 @@ export class UserProfileComponent implements OnInit {
         apellido: this.formularioRegistro.value.apellido,
         documento: this.formularioRegistro.value.cedula
       }).subscribe(data => {
+        console.log(data)
         this.alumnoService.create({
           cantidad_materias: this.formularioRegistro.value.cantidadMaterias,
           derecho_examen: this.formularioRegistro.value.derechoExamen,
           vestuario: this.formularioRegistro.value.vestuario,
           curso: this.formularioRegistro.value.curso,
           id_persona: data.id
-        }).subscribe(response => {
+        }).subscribe(() => {
           Notify.success("Registro exitoso")
           this.formularioRegistro.reset();
         })
