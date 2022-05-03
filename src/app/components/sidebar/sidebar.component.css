@@ -8,4 +8,14 @@ background-color: #F3F4F7 !important;
     display: block !important;
     margin: 0 auto !important;
 }
+/* .nav-link{
+    background-color: #8DB9CA !important;
+} */
+
+a:active {
+    background-color: #8DB9CA !important;
+  }
+  li:active {
+    background-color: #8DB9CA !important;
+  }
 /* 1248AB */
