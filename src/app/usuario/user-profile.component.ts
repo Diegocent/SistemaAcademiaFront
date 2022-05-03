@@ -54,11 +54,25 @@ export class UserProfileComponent implements OnInit {
   }
 
   formIsValid(): boolean{
-    if (this.formularioRegistro.value.cedula == '' || this.formularioRegistro.value.nombre  == '' || this.formularioRegistro.value.apellido == '' ||
-      this.formularioRegistro.value.vestuario == '' || this.formularioRegistro.value.entrada == '' || this.formularioRegistro.value.cantidadMaterias == ''||
-      this.formularioRegistro.value.derechoExamen == '' || this.formularioRegistro.value.curso == '') {
-        return false;
-      }  
-      return true;
+    let validForm: boolean = true;
+    if (this.formularioRegistro.value.cedula == '' || this.formularioRegistro.value.cedula == null) {
+      validForm = false;
+    } else if (this.formularioRegistro.value.nombre == '' || this.formularioRegistro.value.nombre == null) {
+      validForm = false;
+    } else if (this.formularioRegistro.value.apellido == '' || this.formularioRegistro.value.apellido == null) {
+      validForm = false;
+    } else if (this.formularioRegistro.value.vestuario == '' || this.formularioRegistro.value.vestuario == null) {
+      validForm = false;
+    } else if (this.formularioRegistro.value.entrada == '' || this.formularioRegistro.value.entrada == null) {
+      validForm = false;
+    } else if (this.formularioRegistro.value.cantidadMaterias == '' || this.formularioRegistro.value.cantidadMaterias == null) {
+      validForm = false;
+    } else if (this.formularioRegistro.value.derechoExamen == '' || this.formularioRegistro.value.curso == null) {
+      validForm = false;
+    } else if (this.formularioRegistro.value.curso == '' || this.formularioRegistro.value.curso == null) {
+      validForm = false;
+    }
+
+    return validForm;
   }
 }
