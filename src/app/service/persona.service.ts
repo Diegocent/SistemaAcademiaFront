@@ -31,4 +31,8 @@ export class PersonaService {
     return this.http.delete(`${baseUrl}/${id}`);
   }
 
+  checkPersona(ci): Observable<any> {
+    return this.http.get(`${baseUrl}/documento/${ci}`);
+  }
+
 }

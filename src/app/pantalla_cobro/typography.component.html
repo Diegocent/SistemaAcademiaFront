@@ -8,34 +8,34 @@
                         <h4 class="card-title" id="panel">Pantalla Cobro</h4>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form [formGroup]="formularioCobro">
                             <div class="container" id="formulario">
                             <div class="row">
                                 <div class="col-md-6">
                                   <mat-form-field class="example-full-width">
-                                      <input matInput placeholder="Numero de Cedula" id="input">
+                                      <input matInput placeholder="Numero de Cedula" id="input" (change)="cedulaChange($event)" formControlName="cedula">
                                     </mat-form-field>
                                 </div>
                                 <div class="col-md-6">
                                     <mat-form-field class="example-full-width">
-                                      <input matInput placeholder="Nombre" type="text">
+                                      <input matInput placeholder="Nombre" type="text" [value]="nombre" disabled>
                                     </mat-form-field>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                   <mat-form-field class="example-full-width">
-                                    <mat-select placeholder="Tipo de pago">
-                                        <mat-option value="one">Cuota</mat-option>
-                                        <mat-option value="two">Vestuario</mat-option>
-                                        <mat-option value="two">Entrada</mat-option>
-                                        <mat-option value="two">Derecho a examen</mat-option>
+                                    <mat-select placeholder="Tipo de pago" formControlName="tipoPago">
+                                        <mat-option value="cuota">Cuota</mat-option>
+                                        <mat-option value="vestuario">Vestuario</mat-option>
+                                        <mat-option value="entrada">Entrada</mat-option>
+                                        <mat-option value="derechoExamen">Derecho a examen</mat-option>
                                       </mat-select> 
                                   </mat-form-field>
                                 </div>
                                 <div class="col-md-6">
                                   <mat-form-field class="example-full-width">
-                                    <input matInput placeholder="Importe" type="number">
+                                    <input matInput placeholder="Importe" type="number" formControlName="importe">
                                   </mat-form-field>
                                 </div>
                             </div>
@@ -76,7 +76,7 @@
                                   </table>
                                 </div>
                             </div>
-                            <button mat-raised-button type="submit" class="btn pull-right">Finalizar</button>
+                            <button mat-raised-button type="submit" class="btn pull-right" (click)="guardarCobro()">Finalizar</button>
                             <button mat-raised-button type="submit" class="btn pull-right" id="cancelar">Cancelar</button>
                             <div class="clearfix"></div>
                         </form>
