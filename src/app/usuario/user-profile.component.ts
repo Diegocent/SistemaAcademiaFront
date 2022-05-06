@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PersonaService } from 'app/service/persona.service';
 import { AlumnoService } from 'app/service/alumno.service';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { Report } from 'notiflix/build/notiflix-report-aio';
 import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
@@ -31,23 +32,31 @@ export class UserProfileComponent implements OnInit {
 
   guardarAlumno() {
     if (this.formIsValid()) {
-      this.personaService.create({
-        nombre: this.formularioRegistro.value.nombre,
-        apellido: this.formularioRegistro.value.apellido,
-        documento: this.formularioRegistro.value.cedula
-      }).subscribe(data => {
-        console.log(data)
-        this.alumnoService.create({
-          cantidad_materias: this.formularioRegistro.value.cantidadMaterias,
-          derecho_examen: this.formularioRegistro.value.derechoExamen,
-          vestuario: this.formularioRegistro.value.vestuario,
-          curso: this.formularioRegistro.value.curso,
-          id_persona: data.id
-        }).subscribe(() => {
-          Notify.success("Registro exitoso")
-          this.formularioRegistro.reset();
+      if (!this.personaService.checkPersona(this.formularioRegistro.value.cedula)) {
+        this.personaService.create({
+          nombre: this.formularioRegistro.value.nombre,
+          apellido: this.formularioRegistro.value.apellido,
+          documento: this.formularioRegistro.value.cedula
+        }).subscribe(data => {
+          console.log(data)
+          this.alumnoService.create({
+            cantidad_materias: this.formularioRegistro.value.cantidadMaterias,
+            derecho_examen: this.formularioRegistro.value.derechoExamen,
+            vestuario: this.formularioRegistro.value.vestuario,
+            curso: this.formularioRegistro.value.curso,
+            id_persona: data.id
+          }).subscribe(() => {
+            Notify.success("Registro exitoso")
+            this.formularioRegistro.reset();
+          })
         })
-      })
+      } else {
+        Report.failure(
+          'Error',
+          'Ya existe una alumna con el número de cédula, asegúrese de haber ingresado la cédula correctamente.',
+          'Aceptar',
+          );
+      }
     } else {
       Notify.failure("Favor completar todos los campos")
     }
