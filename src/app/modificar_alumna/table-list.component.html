@@ -6,55 +6,51 @@
                   <div class="card-header card-header" id="recuadro">
                       <h4 class="card-title" id="panel" >Administracion de Alumnos</h4>
                   </div>
-                  
+
           <div class="col-md-12">
-                  <div class="card-body">
-                      <div class="table-responsive">
-                          <table class="table table-hover">
-                              <thead class="">
-                                  <th>
-                                      N° Cedula
-                                  </th>
-                                  <th>
-                                      Nombre
-                                  </th>
-                                  <th>
-                                      Vestuario
-                                  </th>
-                                  <th>
-                                      Entrada
-                                  </th>
-                                  <th>
-                                      Cantidad de materias
-                                  </th>
-                                  <th>
-                                      Derecho a examen
-                                  </th>
-                              </thead>
-                              <tbody>
-                                  <tr *ngFor="let personaAlumno of personaAlumno">
-                                      <td>
-                                          {{personaAlumno.persona.documento}}
-                                      </td>
-                                      <td>
-                                          {{personaAlumno.persona.nombre}} {{personaAlumno.persona.apellido}}
-                                      </td>
-                                      <td>
-                                          {{personaAlumno.alumno.vestuario}}
-                                      </td>
-                                      <td>
-                                          {{personaAlumno.alumno.entrada}}
-                                      </td>
-                                      <td>
-                                          {{personaAlumno.alumno.cantidad_materias}}
-                                      </td>
-                                      <td>
-                                        {{personaAlumno.alumno.derecho_examen}}
-                                    </td>
-                                  </tr>
-                              </tbody>
-                          </table>                    
-                    </div>
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+              
+                <ng-container matColumnDef="cedula">
+                  <th mat-header-cell *matHeaderCellDef> Cedula. </th>
+                  <td mat-cell *matCellDef="let element"> {{element.persona.documento}} </td>
+                </ng-container>
+              
+                <ng-container matColumnDef="nombre">
+                  <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                  <td mat-cell *matCellDef="let element"> {{element.persona.nombre}} {{element.persona.apellido}}</td>
+                </ng-container>
+              
+                <ng-container matColumnDef="vestuario">
+                  <th mat-header-cell *matHeaderCellDef> Vestuario </th>
+                  <td mat-cell *matCellDef="let element"> {{element.alumno.vestuario}} </td>
+                </ng-container>
+              
+                <ng-container matColumnDef="entrada">
+                  <th mat-header-cell *matHeaderCellDef> Entrada </th>
+                  <td mat-cell *matCellDef="let element"> {{element.alumno.documento}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="cantidad_materias">
+                    <th mat-header-cell *matHeaderCellDef> Cantidad de materias </th>
+                    <td mat-cell *matCellDef="let element"> {{element.alumno.cantidad_materias}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="derecho_examen">
+                    <th mat-header-cell *matHeaderCellDef> Derecho a examen </th>
+                    <td mat-cell *matCellDef="let element"> {{element.alumno.derecho_examen}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="accion">
+                    <th mat-header-cell *matHeaderCellDef><span style="margin-left:60px">Acciones</span></th>
+                    <td mat-cell *matCellDef="let element; let i = index">
+                        <button mat-raised-button>Modificar</button>
+                        <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="eliminarAlumno(element, i)">Eliminar</button>
+                    </td>
+                </ng-container>
+              
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
                   </div>
               </div>
           </div>
