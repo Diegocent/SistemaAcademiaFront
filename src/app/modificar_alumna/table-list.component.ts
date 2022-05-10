@@ -15,7 +15,7 @@ export class TableListComponent implements OnInit {
   personas: Persona[] = [];
   alumnos: Alumno[] = [];
   personaAlumno: PersonaAlumno[] = [];
-  pageSlice = this.personaAlumno.slice(0, 3);
+  viewTable: boolean = true;
   
   dataSource: PersonaAlumno[] = []
   displayedColumns: string[] = ['cedula', 'nombre', 'vestuario', 'entrada', 'cantidad_materias', 'derecho_examen', 'accion'];
@@ -42,7 +42,6 @@ export class TableListComponent implements OnInit {
   }
 
   eliminarAlumno(data, index) {
-    console.log(data, index)
     Confirm.show(
       'Eliminar alumno/a',
       '¿Está seguro?',
@@ -71,5 +70,10 @@ export class TableListComponent implements OnInit {
       {
       },
       );
+  }
+
+  modificarAlumno() {
+    console.log('modificar alumno')
+    this.viewTable = !this.viewTable;
   }
 }
