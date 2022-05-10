@@ -31,4 +31,8 @@ export class AlumnoService {
     return this.http.delete(`${baseUrl}/${id}`);
   }
 
+  getAlumnoByCI(ci): Observable<any> {
+    return this.http.get(`${baseUrl}/${ci}`);
+  }
+
 }
