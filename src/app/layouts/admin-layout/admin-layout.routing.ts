@@ -58,6 +58,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'pantalla_cobro',     component: TypographyComponent },
     { path: 'informe_diario',          component: IconsComponent },
     { path: 'informe_fechas',           component: MapsComponent },
-    { path: 'notifications',  component: NotificationsComponent },
+    { path: 'configuracion',  component: NotificationsComponent },
     { path: 'upgrade',        component: UpgradeComponent },
 ];
