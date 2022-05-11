@@ -35,4 +35,8 @@ export class PersonaService {
     return this.http.get(`${baseUrl}/documento/${ci}`);
   }
 
+  getPersona(ci): Observable<any> {
+    return this.http.get(`${baseUrl}/doc/${ci}`)
+  }
+
 }

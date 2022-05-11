@@ -27,7 +27,6 @@ export class TypographyComponent {
 
   formularioCobro = new FormGroup({
     cedula: new FormControl(''),
-    nombre: new FormControl(''),
     tipoPago: new FormControl(''),
     importe: new FormControl(''),
   })
@@ -39,20 +38,17 @@ export class TypographyComponent {
   constructor(private personaService: PersonaService) {
     Object.values(Conceptos).forEach(concepto => {
       this.conceptos = [...this.conceptos, concepto]
-    })
+    });
   }
 
   guardarCobro() {
     console.log(this.formularioCobro.value);
-    console.log(this.conceptos);
-    console.log(this.conceptos[0])
-    console.log(Conceptos.CUOTA)
   }
 
   cedulaChange(event) {
-    let x = event.target.value;
-    console.log(x);
-    // console.log(this.personaService.checkPersona(event.target.value))
-    // console.log(event.target.value);
+    this.personaService.getPersona(event.target.value)
+      .subscribe(response => {
+        this.nombre = response.nombre + ' ' + response.apellido;
+      })
   }
 }

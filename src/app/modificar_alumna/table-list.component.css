@@ -1,11 +1,11 @@
 table {
     width: 100%;
     box-shadow: none;
-    background-color: #E4F1F4;
-  }
+    /* background-color: #E4F1F4; */
+  } 
 
 
-  .container{
+  /*.container{
       padding: 10px !important;
       height:100% !important;
       display: inline-block !important;
@@ -14,17 +14,17 @@ table {
   #formulario{
     display: flex;
   justify-content: center;
-  /* transform: translate(9%, 0%); */
   }
 
+  */
   #panel{
       text-align: center !important;
-      color: #E4F1F4 !important;
+      color: #48A9C5 !important;
       font-weight: 800 !important;
       font-size: 30px !important;
   }
 
-  #recuadro{
+  /*#recuadro{
       background-color: #8DB9CA !important;
   }
 
@@ -40,4 +40,4 @@ table {
   p{
     text-align: center !important;
       color: #E4F1F4 !important;
-  }
+  } */
