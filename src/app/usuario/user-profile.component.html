@@ -29,34 +29,54 @@
                                 </div>
                                 <div class="col-md-5">
                                   <mat-form-field class="example-full-width">
-                                    <input matInput placeholder="Entrada" type="number" formControlName="entrada">
-                                  </mat-form-field>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-5">
-                                  <mat-form-field class="example-full-width">
-                                    <input matInput placeholder="Vestuario" type="number" formControlName="vestuario">
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-md-5">
-                                  <mat-form-field class="example-full-width">
                                     <input matInput placeholder="Cantidad de materias" type="number" formControlName="cantidadMaterias">
                                   </mat-form-field>
                                 </div>
+                                <!-- <div class="col-md-5">
+                                  <mat-form-field class="example-full-width">
+                                    <input matInput placeholder="Entrada" type="number" formControlName="entrada">
+                                  </mat-form-field>
+                                </div> -->
                             </div>
                             <div class="row">
-                                <div class="col-md-5">
+                                <!-- <div class="col-md-5">
+                                  <mat-form-field class="example-full-width">
+                                    <input matInput placeholder="Vestuario" type="number" formControlName="vestuario">
+                                  </mat-form-field>
+                                </div> -->
+                                <!-- <div class="col-md-5">
+                                  <mat-form-field class="example-full-width">
+                                    <input matInput placeholder="Cantidad de materias" type="number" formControlName="cantidadMaterias">
+                                  </mat-form-field>
+                                </div> -->
+                            </div>
+                            <div class="row">
+                                <!-- <div class="col-md-5">
                                   <mat-form-field class="example-full-width">
                                     <input matInput placeholder="Derecho a examen" type="number" formControlName="derechoExamen">
                                   </mat-form-field>
-                                </div>
+                                </div> -->
                                 <div class="col-md-5">
                                   <mat-form-field class="example-full-width">
                                     <input matInput placeholder="Curso" type="text" formControlName="curso">
                                   </mat-form-field>
                                 </div>
                             </div>
+                            <div class="row">
+                              <div class="col-md-5">
+                                <mat-checkbox name="becaBeneficiario" (change)="becaFunc($event.checked)" [disabled]="beneficiario"><span style="color: black">Posee Beca</span></mat-checkbox>
+                              </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-5">
+                              <mat-checkbox [disabled]="beca" name="becaBeneficiario" (change)="beneficiarioFunc($event.checked)"><span style="color: black;">Posee Descuento</span></mat-checkbox>
+                              <div *ngIf="beneficiario">
+                                <mat-form-field class="example-full-width">
+                                  <input matInput placeholder="Descuento de cuota" type="number" formControlName="cantidadMaterias">
+                                </mat-form-field>
+                              </div>
+                            </div>
+                          </div>
                             <button mat-raised-button (click)="guardarAlumno()" class="btn btn-danger pull-right">Guardar</button>
                             <div class="clearfix"></div>
                         </form>

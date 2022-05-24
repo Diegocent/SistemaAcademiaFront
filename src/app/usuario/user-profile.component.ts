@@ -4,13 +4,27 @@ import { AlumnoService } from 'app/service/alumno.service';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { Report } from 'notiflix/build/notiflix-report-aio';
 import { FormGroup, FormControl } from '@angular/forms';
-
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent implements OnInit {
+
+  beca: boolean = false;
+  beneficiario: boolean = false;
+
+  test(e){
+    console.log(e)
+  }
+
+  becaFunc(e) {
+    this.beca = e;
+  }
+
+  beneficiarioFunc(e) {
+    this.beneficiario = e;
+  }
 
   formularioRegistro = new FormGroup({
     cedula: new FormControl(''),

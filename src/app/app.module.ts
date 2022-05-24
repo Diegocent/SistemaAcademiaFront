@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 
 import {MatTableModule} from '@angular/material/table';
 import {MatButtonModule} from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
@@ -20,8 +21,9 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
     ComponentsModule,
     RouterModule,
     AppRoutingModule,
+    MatCheckboxModule,
     MatTableModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   declarations: [
     AppComponent,
