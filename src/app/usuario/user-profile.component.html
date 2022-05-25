@@ -57,22 +57,30 @@
                                   </mat-form-field>
                                 </div> -->
                                 <div class="col-md-5">
-                                  <mat-form-field class="example-full-width">
+                                  <!-- <mat-form-field class="example-full-width">
                                     <input matInput placeholder="Curso" type="text" formControlName="curso">
+                                  </mat-form-field> -->
+                                  <mat-form-field class="example-full-width">
+                                    <mat-select placeholder="Cursos" formControlName="curso">
+                                        <mat-option *ngFor="let curso of cursos" [value]="curso">{{curso.nombre}}</mat-option>
+                                      </mat-select> 
                                   </mat-form-field>
                                 </div>
                             </div>
                             <div class="row">
                               <div class="col-md-5">
-                                <mat-checkbox name="becaBeneficiario" (change)="becaFunc($event.checked)" [disabled]="beneficiario"><span style="color: black">Posee Beca</span></mat-checkbox>
+                                <mat-radio-group aria-label="Select an option">
+                                  <mat-radio-button value="ninguno" id="defaultRadio" [checked]="true" (change)="becaFuncionario($event)"><span style="color: black;">No posee beca ni descuento</span></mat-radio-button>
+                                  <mat-radio-button value="beca" (change)="becaFuncionario($event)" style="margin-left:10px"><span style="color: black;">Posee Beca</span></mat-radio-button>
+                                  <mat-radio-button value="descuento" (change)="becaFuncionario($event)" style="margin-left:10px"><span style="color: black;">Posee Descuento</span></mat-radio-button>
+                                </mat-radio-group>
                               </div>
                           </div>
                           <div class="row">
                             <div class="col-md-5">
-                              <mat-checkbox [disabled]="beca" name="becaBeneficiario" (change)="beneficiarioFunc($event.checked)"><span style="color: black;">Posee Descuento</span></mat-checkbox>
                               <div *ngIf="beneficiario">
                                 <mat-form-field class="example-full-width">
-                                  <input matInput placeholder="Descuento de cuota" type="number" formControlName="cantidadMaterias">
+                                  <input matInput placeholder="Descuento de cuota" type="number" formControlName="cantidadDescuento">
                                 </mat-form-field>
                               </div>
                             </div>

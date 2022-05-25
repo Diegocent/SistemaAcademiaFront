@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { PersonaService } from 'app/service/persona.service';
 import { AlumnoService } from 'app/service/alumno.service';
+import { CursoService } from 'app/service/curso.service';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { Report } from 'notiflix/build/notiflix-report-aio';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Curso } from 'app/models/models';
+import { MontoConceptoService } from 'app/service/monto_concepto.service';
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
@@ -11,20 +14,10 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 export class UserProfileComponent implements OnInit {
 
-  beca: boolean = false;
   beneficiario: boolean = false;
-
-  test(e){
-    console.log(e)
-  }
-
-  becaFunc(e) {
-    this.beca = e;
-  }
-
-  beneficiarioFunc(e) {
-    this.beneficiario = e;
-  }
+  beca: boolean = false;
+  noBecaNoDescuento: boolean = true;
+  cursos: Curso[] = [];
 
   formularioRegistro = new FormGroup({
     cedula: new FormControl(''),
@@ -34,21 +27,38 @@ export class UserProfileComponent implements OnInit {
     entrada: new FormControl(''),
     cantidadMaterias: new FormControl(''),
     derechoExamen: new FormControl(''),
-    curso: new FormControl('')
+    curso: new FormControl(''),
+    descuento: new FormControl(''),
+    cantidadDescuento: new FormControl('')
   })
+
+  becaFuncionario(e) {
+    console.log(e.value)
+    if (e.value === 'descuento'){ this.beneficiario = true; this.beca = false } 
+    if (e.value === 'beca') { this.beca = true; this.beneficiario = false}
+    if (e.value === 'ninguno') { this.beca = false; this.beneficiario = false }
+  }
 
   constructor(
     private personaService: PersonaService,
-    private alumnoService: AlumnoService) {}
+    private alumnoService: AlumnoService,
+    private cursoService: CursoService,
+    private montoConceptoService: MontoConceptoService) {}
 
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.cursoService.getAll().subscribe(result => {
+      this.cursos = result;
+    })
+  }
 
   guardarAlumno() {
+    console.log(this.formularioRegistro.value)
+    console.log(this.beneficiario)
     if(this.formIsValid()) {
       this.personaService.checkPersona(this.formularioRegistro.value.cedula)
       .subscribe(response => {
-        if (response){
+        if (response) {
           Report.failure(
             'Error',
             'Ya existe un/a alumno/a con el número de cédula, asegúrese de haber ingresado la cédula correctamente.',
@@ -60,18 +70,28 @@ export class UserProfileComponent implements OnInit {
             apellido: this.formularioRegistro.value.apellido,
             documento: this.formularioRegistro.value.cedula
           }).subscribe(data => {
-            console.log(data)
-            this.alumnoService.create({
-              cantidad_materias: this.formularioRegistro.value.cantidadMaterias,
-              derecho_examen: this.formularioRegistro.value.derechoExamen,
-              vestuario: this.formularioRegistro.value.vestuario,
-              curso: this.formularioRegistro.value.curso,
-              entrada: this.formularioRegistro.value.entrada,
-              id_persona: data.id
-            }).subscribe((response) => {
-              console.log(response)
-              Notify.success('Registro exitoso')
-              this.formularioRegistro.reset();
+            let descuento = 0;
+            let idCuota = this.formularioRegistro.value.curso.cuota;
+            this.montoConceptoService.get(idCuota).subscribe(res => {
+              console.log('beca', this.beca)
+              if (this.beca){
+                descuento = res.monto - (res.monto * 0.5);
+              } else if (this.beneficiario) {
+                descuento = this.formularioRegistro.value.cantidadDescuento;
+              }
+              this.alumnoService.create({
+                cantidad_materias: this.formularioRegistro.value.cantidadMaterias,
+                // derecho_examen: this.formularioRegistro.value.derechoExamen,
+                vestuario: 0,
+                id_curso: this.formularioRegistro.value.curso.id,
+                entrada: 0,
+                descuento: descuento,
+                id_persona: data.id
+              }).subscribe((response) => {
+                console.log(response)
+                Notify.success('Registro exitoso')
+                this.formularioRegistro.reset();
+              })
             })
           })
         }
@@ -81,7 +101,7 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
-  formIsValid(): boolean{
+  formIsValid(): boolean {
     let validForm = true;
     if (this.formularioRegistro.value.cedula === '' || this.formularioRegistro.value.cedula == null) {
       validForm = false;
@@ -89,15 +109,11 @@ export class UserProfileComponent implements OnInit {
       validForm = false;
     } else if (this.formularioRegistro.value.apellido === '' || this.formularioRegistro.value.apellido == null) {
       validForm = false;
-    } else if (this.formularioRegistro.value.vestuario === '' || this.formularioRegistro.value.vestuario == null) {
-      validForm = false;
-    } else if (this.formularioRegistro.value.entrada === '' || this.formularioRegistro.value.entrada == null) {
-      validForm = false;
     } else if (this.formularioRegistro.value.cantidadMaterias === '' || this.formularioRegistro.value.cantidadMaterias == null) {
       validForm = false;
-    } else if (this.formularioRegistro.value.derechoExamen === '' || this.formularioRegistro.value.curso == null) {
-      validForm = false;
     } else if (this.formularioRegistro.value.curso === '' || this.formularioRegistro.value.curso == null) {
+      validForm = false;
+    } else if (this.beneficiario && this.formularioRegistro.value.cantidadDescuento === ''){
       validForm = false;
     }
 

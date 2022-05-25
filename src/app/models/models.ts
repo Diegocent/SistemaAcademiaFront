@@ -5,6 +5,11 @@ export interface Persona {
     documento: string;
 }
 
+export interface Curso {
+    id: number;
+    nombre: string;
+}
+
 export interface Alumno {
     id: number;
     cantidad_materias: number;
@@ -18,4 +23,7 @@ export interface Alumno {
 export interface PersonaAlumno { 
     persona: Persona;
     alumno: Alumno;
+}
+export interface Curso {
+    nombre: string;
 }
