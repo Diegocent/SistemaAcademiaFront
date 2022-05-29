@@ -15,9 +15,9 @@ export class CursoService {
     return this.http.get(`${baseUrl}`);
   }
 
-//   get(id): Observable<any> {
-//     return this.http.get(`${baseUrl}/${id}`);
-//   }
+  get(id): Observable<any> {
+    return this.http.get(`${baseUrl}/${id}`);
+  }
 
 //   create(data): Observable<any> {
 //     return this.http.post(baseUrl, data);
