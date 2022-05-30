@@ -5,6 +5,7 @@ import { Conceptos } from 'app/config/app-settings';
 import { AlumnoService } from 'app/service/alumno.service';
 import { Alumno, Persona } from 'app/models/models';
 import { MontoConceptoService } from 'app/service/monto_concepto.service';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 @Component({
   selector: 'app-typography',
@@ -16,6 +17,7 @@ export class TypographyComponent {
 
   formularioCobro = new FormGroup({
     cedula: new FormControl(''),
+    nombre: new FormControl(''),
     tipoPago: new FormControl(''),
     importe: new FormControl(''),
   })
@@ -39,18 +41,25 @@ export class TypographyComponent {
       this.alumnos = response;
       console.log(this.alumnos)
     })
+    this.formularioCobro.controls['nombre'].disable();
+    this.formularioCobro.controls['importe'].disable();
+    // document.getElementById('importe').setAttribute('disabled', 'true');
   }
 
   guardarCobro() {
     console.log(this.formularioCobro.value);
     this.limpiarFormulario()
+    Notify.success('Registro exitoso')
   }
 
   cedulaChange(event) {
     this.personaService.getPersona(event.target.value)
       .subscribe(response => {
         this.persona = response;
-        this.nombre = this.persona.nombre + ' ' + this.persona.apellido;
+        // this.nombre = this.persona.nombre + ' ' + this.persona.apellido;
+        this.formularioCobro.patchValue({
+          'nombre': this.persona.nombre + ' ' + this.persona.apellido
+        })
         console.log(response)
         this.alumnos.forEach(alumno => {
           if (alumno.sa_persona.id === this.persona.id) {
