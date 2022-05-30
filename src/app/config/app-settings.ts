@@ -4,3 +4,4 @@ export enum Conceptos {
     ENTRADA = 'Entrada',
     DERECHO_EXAMEN = 'Derecho a examen'
 }
+
