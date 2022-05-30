@@ -8,22 +8,28 @@ export interface Persona {
 export interface Curso {
     id: number;
     nombre: string;
+    cuota: number;
+    examen: number;
 }
-
 export interface Alumno {
     id: number;
     cantidad_materias: number;
     cuota_anual: number;
     derecho_examen: number;
     vestuario: number;
-    curso: number;
+    id_curso: number;
     entrada: number;
+    sa_curso: Curso;
+    sa_persona: Persona;
 }
-
+export interface MontoConcepto {
+    id: number;
+    monto: number;
+}
 export interface PersonaAlumno { 
     persona: Persona;
     alumno: Alumno;
-}
-export interface Curso {
-    nombre: string;
+    cuota: Curso;
+    examen: Curso;
+    curso: string;
 }

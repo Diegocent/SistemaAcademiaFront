@@ -17,6 +17,11 @@
                     <th mat-header-cell *matHeaderCellDef> Nombre </th>
                     <td mat-cell *matCellDef="let element"> {{element.persona.nombre}} {{element.persona.apellido}}</td>
                   </ng-container>
+
+                  <ng-container matColumnDef="curso">
+                    <th mat-header-cell *matHeaderCellDef> Curso </th>
+                    <td mat-cell *matCellDef="let element"> {{element.curso}}</td>
+                  </ng-container>
                 
                   <ng-container matColumnDef="vestuario">
                     <th mat-header-cell *matHeaderCellDef> Vestuario </th>
@@ -35,7 +40,12 @@
   
                   <ng-container matColumnDef="derecho_examen">
                       <th mat-header-cell *matHeaderCellDef> Derecho a examen </th>
-                      <td mat-cell *matCellDef="let element"> {{element.alumno.derecho_examen}} </td>
+                      <td mat-cell *matCellDef="let element"> {{element.curso == 'Pre-Ballet' || element.curso == 'Preparatorio' ? 150000 : element.alumno.cantidad_materias * element.examen.monto}} Gs.</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="cuota">
+                    <th mat-header-cell *matHeaderCellDef>Cuota</th>
+                    <td mat-cell *matCellDef="let element">{{element.cuota.monto - element.alumno.descuento}} Gs.</td>
                   </ng-container>
   
                   <ng-container matColumnDef="accion">
