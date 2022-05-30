@@ -19,7 +19,8 @@ export interface Alumno {
     vestuario: number;
     id_curso: number;
     entrada: number;
-    sa_curso: Curso
+    sa_curso: Curso;
+    sa_persona: Persona;
 }
 export interface MontoConcepto {
     id: number;

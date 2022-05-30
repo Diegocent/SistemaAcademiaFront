@@ -32,7 +32,6 @@ export class AlumnoService {
   }
 
   getAlumnoByCI(ci): Observable<any> {
-    return this.http.get(`${baseUrl}/${ci}`);
+    return this.http.get(`${baseUrl}/doc/${ci}`);
   }
-
 }
