@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header" id="recuadro">
-                        <h4 class="card-title"id="panel">Agregrar alumna</h4>
+                        <h4 class="card-title"id="panel">{{edit === true ? 'Modificar alumna': 'Agregar alumna'}}</h4>
                         <p class="card-category">En caso de no tener dejar en cero</p>
                     </div>
                     <div class="card-body">
@@ -32,18 +32,18 @@
                                     <input matInput placeholder="Cantidad de materias" type="number" formControlName="cantidadMaterias">
                                   </mat-form-field>
                                 </div>
-                                <!-- <div class="col-md-5">
+                                <div class="col-md-5" *ngIf="edit">
                                   <mat-form-field class="example-full-width">
                                     <input matInput placeholder="Entrada" type="number" formControlName="entrada">
                                   </mat-form-field>
-                                </div> -->
+                                </div>
                             </div>
                             <div class="row">
-                                <!-- <div class="col-md-5">
+                                <div class="col-md-5" *ngIf="edit">
                                   <mat-form-field class="example-full-width">
                                     <input matInput placeholder="Vestuario" type="number" formControlName="vestuario">
                                   </mat-form-field>
-                                </div> -->
+                                </div>
                                 <!-- <div class="col-md-5">
                                   <mat-form-field class="example-full-width">
                                     <input matInput placeholder="Cantidad de materias" type="number" formControlName="cantidadMaterias">
@@ -57,9 +57,6 @@
                                   </mat-form-field>
                                 </div> -->
                                 <div class="col-md-5">
-                                  <!-- <mat-form-field class="example-full-width">
-                                    <input matInput placeholder="Curso" type="text" formControlName="curso">
-                                  </mat-form-field> -->
                                   <mat-form-field class="example-full-width">
                                     <mat-select placeholder="Cursos" formControlName="curso">
                                         <mat-option *ngFor="let curso of cursos" [value]="curso">{{curso.nombre}}</mat-option>

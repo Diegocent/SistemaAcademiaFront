@@ -6,6 +6,10 @@ import { AlumnoService } from 'app/service/alumno.service';
 import { Alumno, Persona } from 'app/models/models';
 import { MontoConceptoService } from 'app/service/monto_concepto.service';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { PagosService } from 'app/service/pagos.service';
+import { element } from 'protractor';
+import { ConceptoPagoService } from 'app/service/concepto_pago.service';
+import { Report } from 'notiflix';
 
 @Component({
   selector: 'app-typography',
@@ -28,11 +32,18 @@ export class TypographyComponent {
   alumno: Alumno;
   tipoPago: string;
 
+  listaPagos: any[] = [];
+  displayedColumns: string[] = ['concepto', 'importe'];
+  viewPagos: Boolean = false;
+
   nombre: String = '';
+  importe: number;
 
   constructor(private personaService: PersonaService,
     private alumnoService: AlumnoService, 
-    private montoConceptoService: MontoConceptoService ) {
+    private montoConceptoService: MontoConceptoService,
+    private pagoService: PagosService,
+    private conceptoPago: ConceptoPagoService ) {
     Object.values(Conceptos).forEach(concepto => {
       this.conceptos = [...this.conceptos, concepto]
     });
@@ -41,15 +52,64 @@ export class TypographyComponent {
       this.alumnos = response;
       console.log(this.alumnos)
     })
+
     this.formularioCobro.controls['nombre'].disable();
     this.formularioCobro.controls['importe'].disable();
-    // document.getElementById('importe').setAttribute('disabled', 'true');
+  }
+  
+  finalizarPago() {
+    let monto_total = () => {
+      let monto = 0;
+      this.listaPagos.forEach(element => {
+        monto += element.importe;
+      })
+      return monto;
+    }
+
+    this.pagoService.create({
+      'monto_total': monto_total(),
+      'id_alumno': this.alumno.id
+    }).subscribe(res => {
+      this.listaPagos.forEach((element, index) => {
+        this.conceptoPago.create({
+          'concepto': element.concepto,
+          'monto': element.importe,
+          'id_pagos': res.id
+        }).subscribe(() => {
+          if (index === this.listaPagos.length - 1) {
+            this.formularioCobro.reset();
+            Report.success(
+              'Éxito',
+              'Los pagos fueron registrados con éxito',
+              'Ok',
+              );
+            this.listaPagos = [];
+            this.viewPagos = false;
+          } 
+        })
+      });
+    });
   }
 
-  guardarCobro() {
+  guardarPago() {
     console.log(this.formularioCobro.value);
-    this.limpiarFormulario()
-    Notify.success('Registro exitoso')
+    console.log(this.formularioCobro.controls['importe'].value)
+    this.listaPagos = [...this.listaPagos, {
+      'concepto': this.formularioCobro.controls['tipoPago'].value,
+      'importe': this.formularioCobro.controls['importe'].value
+    }]
+
+    if (this.listaPagos.length > 0) { this.viewPagos = true; }
+
+    // this.limpiarFormulario()
+    this.formularioCobro.patchValue({'importe': ''})
+    this.formularioCobro.patchValue({'tipoPago': ''})
+  }
+
+  cancelarPago() {
+    this.listaPagos = [];
+    this.viewPagos = false;
+    this.formularioCobro.reset();
   }
 
   cedulaChange(event) {
@@ -77,8 +137,8 @@ export class TypographyComponent {
     this.tipoPago = concepto.value;
     if (this.tipoPago === 'Cuota') {
       this.montoConceptoService.get(this.alumno.sa_curso.cuota).subscribe(res => {
-        let importe = res.monto;
-        this.formularioCobro.patchValue({'importe': importe})
+        this.importe = res.monto;
+        this.formularioCobro.patchValue({'importe': this.importe})
       })
     } else if (this.tipoPago == 'Vestuario') {
         this.formularioCobro.patchValue({'importe': this.alumno.vestuario})
@@ -86,13 +146,13 @@ export class TypographyComponent {
       this.formularioCobro.patchValue({'importe': this.alumno.entrada})
     } else if (this.tipoPago == 'Derecho a examen') {
       this.montoConceptoService.get(this.alumno.sa_curso.examen).subscribe(res => {
-        let importe = null;
+        this.importe = null;
         if (this.alumno.sa_curso.nombre === 'Pre-Ballet' || this.alumno.sa_curso.nombre === 'Preparatorio') {
-          importe = 150000;
+          this.importe = 150000;
         } else {
-          importe = res.monto * this.alumno.cantidad_materias;
+          this.importe = res.monto * this.alumno.cantidad_materias;
         }
-        this.formularioCobro.patchValue({'importe': importe})
+        this.formularioCobro.patchValue({'importe': this.importe})
       })
     }
   }

@@ -4,6 +4,9 @@ table {
     background-color: #E4F1F4;
   }
 
+  #titulo {
+    color: #E4F1F4 !important;
+  }
 
   .container{
       padding: 10px !important;
@@ -36,3 +39,9 @@ table {
       background-color: #fff !important;
 
   }
+
+table {
+  width: 100%;
+  box-shadow: none;
+  background-color: #E4F1F4;
+} 

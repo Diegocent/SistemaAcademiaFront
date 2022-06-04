@@ -38,17 +38,50 @@
                             </div>
                         </div>
                         <div>
-                          <button mat-raised-button type="submit" class="btn pull-right" (click)="guardarCobro()">Finalizar</button>
-                          <button mat-raised-button type="submit" class="btn pull-right" id="cancelar">Cancelar</button>
+                          <button mat-raised-button type="submit" class="btn pull-right" (click)="finalizarPago()">Finalizar Pago</button>
+                          <button mat-raised-button type="submit" class="btn pull-right" (click)="guardarPago()">Guardar Pago</button>
+                          <button mat-raised-button type="submit" class="btn pull-right" id="cancelar" (click)="cancelarPago()">Cancelar</button>
                         </div>
                             <div class="clearfix"></div>
                         </form>
                     </div>
+                    <div *ngIf="viewPagos;" class="main-content">
+                      <div class="container-fluid">
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <div class="card">
+                              <div class="col-md-12">
+                                <table mat-table [dataSource]="listaPagos" class="mat-elevation-z8">         
+                                    <ng-container matColumnDef="concepto">
+                                      <th mat-header-cell *matHeaderCellDef>Concepto</th>
+                                      <td mat-cell *matCellDef="let element"> {{element.concepto}} </td>
+                                    </ng-container>
+                                  
+                                    <ng-container matColumnDef="importe">
+                                      <th mat-header-cell *matHeaderCellDef>Importe</th>
+                                      <td mat-cell *matCellDef="let element"> {{element.importe}}</td>
+                                    </ng-container>
+                
+                                    <!-- <ng-container matColumnDef="accion">
+                                        <th mat-header-cell *matHeaderCellDef><span style="margin-left:60px">Acciones</span></th>
+                                        <td mat-cell *matCellDef="let element; let i = index">
+                                            <button mat-raised-button (click)="eliminar(element)">Modificar</button>
+                                            <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="eliminarAlumno(element, i)">Eliminar</button>
+                                        </td>
+                                    </ng-container> -->
+                                    
+                                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                                  </table>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
                 </div>
             </div>
-            
-            
-        </div>
+        </div>    
     </div>
   </div>
   
