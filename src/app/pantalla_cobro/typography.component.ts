@@ -92,8 +92,8 @@ export class TypographyComponent {
   }
 
   guardarPago() {
-    console.log(this.formularioCobro.value);
-    console.log(this.formularioCobro.controls['importe'].value)
+    // console.log(this.formularioCobro.value);
+    // console.log(this.formularioCobro.controls['importe'].value)
     this.listaPagos = [...this.listaPagos, {
       'concepto': this.formularioCobro.controls['tipoPago'].value,
       'importe': this.formularioCobro.controls['importe'].value
@@ -120,13 +120,13 @@ export class TypographyComponent {
         this.formularioCobro.patchValue({
           'nombre': this.persona.nombre + ' ' + this.persona.apellido
         })
-        console.log(response)
+        // console.log(response)
         this.alumnos.forEach(alumno => {
           if (alumno.sa_persona.id === this.persona.id) {
             this.alumno = alumno;
           }
         })
-        console.log(this.alumnos)
+        // console.log(this.alumnos)
         this.formularioCobro.patchValue({'importe': ''})
         // this.conceptoChange(null);
       })

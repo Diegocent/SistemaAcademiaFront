@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import {MAT_MOMENT_DATE_FORMATS, MomentDateAdapter} from '@angular/material-moment-adapter';
 import {DateAdapter} from '@angular/material/core';
+import { Report } from 'notiflix/build/notiflix-report-aio';
+
 
 export const DateFormat = {
   parse: {
@@ -39,6 +41,12 @@ const ELEMENT_DATA: PeriodicElement[] = [
 export class MapsComponent {
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   dataSource = ELEMENT_DATA;
-  constructor() { }
+  constructor() { 
+    Report.warning(
+      'En Construcción',
+      'Esta funcionalidad se encuentra en proceso de desarrollo.',
+      'Ok',
+      );
+  }
 
 }

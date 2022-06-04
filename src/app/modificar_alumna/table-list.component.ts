@@ -89,9 +89,14 @@ export class TableListComponent implements OnInit {
   }
 
   modificarAlumno(data) {
-    console.log(data.persona)
-    this.data = data.persona;
-    // console.log('dataPersonaAlumno', this.data)
-    this.viewTable = !this.viewTable;
+    Report.warning(
+      'En Construcción',
+      'Esta funcionalidad se encuentra en proceso de desarrollo.',
+      'Ok',
+      );
+    // console.log(data.persona)
+    // this.data = data.persona;
+    // // console.log('dataPersonaAlumno', this.data)
+    // this.viewTable = !this.viewTable;
   }
 }
