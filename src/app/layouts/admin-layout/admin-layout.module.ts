@@ -22,6 +22,7 @@ import {MatTableModule} from '@angular/material/table';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {MatRadioModule} from '@angular/material/radio';
+import { PdfComponent } from '../../pdf/pdf.component';
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import {MatRadioModule} from '@angular/material/radio';
     MapsComponent,
     NotificationsComponent,
     UpgradeComponent,
+    PdfComponent,
   ]
 })
 

@@ -25,10 +25,10 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
     MatTableModule,
     MatButtonModule,
   ],
-  declarations: [
+  declarations: [	
     AppComponent,
     AdminLayoutComponent,
-  ],
+   ],
   providers: [],
   bootstrap: [AppComponent]
 })

@@ -1,9 +1,11 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "strictPropertyInitialization":false,
     "outDir": "./dist/out-tsc",
     "baseUrl": "src",
     "sourceMap": true,
+    "strict": false,
     "declaration": false,
     "module": "es2020",
     "moduleResolution": "node",
