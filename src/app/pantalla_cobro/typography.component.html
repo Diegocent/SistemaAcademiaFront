@@ -1,54 +1,149 @@
-
 <div class="main-content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header card-header" id="recuadro">
-                        <h4 class="card-title" id="panel">Pantalla Cobro</h4>
-                    </div>
-                    <div class="card-body">
-                        <form [formGroup]="formularioCobro">
-                            <div class="container" id="formulario">
-                            <div class="row">
-                                <div class="col-md-6">
-                                  <mat-form-field class="example-full-width">
-                                      <input matInput placeholder="Numero de Cedula" id="input" (change)="cedulaChange($event)" formControlName="cedula">
-                                    </mat-form-field>
-                                </div>
-                                <div class="col-md-6">
-                                    <mat-form-field class="example-full-width">
-                                      <input matInput placeholder="Nombre" type="text" [value]="nombre" disabled>
-                                    </mat-form-field>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                  <mat-form-field class="example-full-width">
-                                    <mat-select placeholder="Tipo de pago" (selectionChange)="conceptoChange($event)" formControlName="tipoPago">
-                                        <mat-option *ngFor="let concepto of conceptos" [value]="concepto">{{concepto}}</mat-option>
-                                      </mat-select> 
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-md-6">
-                                  <mat-form-field class="example-full-width">
-                                    <input matInput placeholder="Importe" type="number" formControlName="importe">
-                                  </mat-form-field>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                          <button mat-raised-button type="submit" class="btn pull-right" (click)="guardarCobro()">Finalizar</button>
-                          <button mat-raised-button type="submit" class="btn pull-right" id="cancelar">Cancelar</button>
-                        </div>
-                            <div class="clearfix"></div>
-                        </form>
-                    </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header" id="recuadro">
+            <h4 class="card-title" id="panel">Pantalla Cobro</h4>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="formularioCobro">
+              <div class="container" id="formulario">
+                <div class="row">
+                  <div class="col-md-6">
+                    <mat-form-field class="example-full-width">
+                      <input
+                        matInput
+                        placeholder="Numero de Cedula"
+                        id="input"
+                        (change)="cedulaChange($event)"
+                        formControlName="cedula"
+                      />
+                    </mat-form-field>
+                  </div>
+                  <div class="col-md-6">
+                    <mat-form-field class="example-full-width">
+                      <input
+                        matInput
+                        placeholder="Nombre"
+                        type="text"
+                        formControlName="nombre"
+                        style="color: black"
+                      />
+                    </mat-form-field>
+                  </div>
                 </div>
-            </div>
-            
-            
+                <div class="row">
+                  <div class="col-md-6">
+                    <mat-form-field class="example-full-width">
+                      <mat-select
+                        placeholder="Tipo de pago"
+                        (selectionChange)="conceptoChange($event)"
+                        formControlName="tipoPago"
+                      >
+                        <mat-option
+                          *ngFor="let concepto of conceptos"
+                          [value]="concepto"
+                          >{{ concepto }}</mat-option
+                        >
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-md-6">
+                    <mat-form-field class="example-full-width">
+                      <input
+                        matInput
+                        placeholder="Importe"
+                        type="number"
+                        formControlName="importe"
+                        style="color: black"
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="viewPagos">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <table
+                        mat-table
+                        [dataSource]="listaPagos"
+                        class="mat-elevation-z8"
+                        id="tabla"
+                      >
+                        <ng-container matColumnDef="concepto">
+                          <th mat-header-cell *matHeaderCellDef>Concepto</th>
+                          <td mat-cell *matCellDef="let element">
+                            {{ element.concepto }}
+                          </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="importe">
+                          <th mat-header-cell *matHeaderCellDef>Importe</th>
+                          <td mat-cell *matCellDef="let element">
+                            {{ element.importe }}
+                          </td>
+                        </ng-container>
+
+                        <!-- <ng-container matColumnDef="accion">
+                                            <th mat-header-cell *matHeaderCellDef><span style="margin-left:60px">Acciones</span></th>
+                                            <td mat-cell *matCellDef="let element; let i = index">
+                                                <button mat-raised-button (click)="eliminar(element)">Modificar</button>
+                                                <button mat-raised-button color="warn" style="margin-left: 10px;" (click)="eliminarAlumno(element, i)">Eliminar</button>
+                                            </td>
+                                        </ng-container> -->
+
+                        <tr
+                          mat-header-row
+                          *matHeaderRowDef="displayedColumns"
+                        ></tr>
+                        <tr
+                          mat-row
+                          *matRowDef="let row; columns: displayedColumns"
+                        ></tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <!-- <app-pdf
+                  *ngFor="let list of listaPagos"
+                  [nombre]="list.concepto"
+                  [monto]="list.importe"
+                ></app-pdf> -->
+                <button
+                  mat-raised-button
+                  type="submit"
+                  class="btn pull-right"
+                  (click)="finalizarPago()"
+                >
+                  Finalizar Pago
+                </button>
+                <button
+                  mat-raised-button
+                  type="submit"
+                  class="btn pull-right"
+                  (click)="guardarPago()"
+                >
+                  Guardar Pago
+                </button>
+                <button
+                  mat-raised-button
+                  type="submit"
+                  class="btn pull-right"
+                  id="cancelar"
+                  (click)="cancelarPago()"
+                >
+                  Cancelar
+                </button>
+              </div>
+              <div class="clearfix"></div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
   </div>
-  
+</div>

@@ -1,95 +1,456 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { PersonaService } from 'app/service/persona.service';
-import { Conceptos } from 'app/config/app-settings';
-import { AlumnoService } from 'app/service/alumno.service';
-import { Alumno, Persona } from 'app/models/models';
-import { MontoConceptoService } from 'app/service/monto_concepto.service';
+import { Component, OnInit, Output, EventEmitter } from "@angular/core";
+import { FormGroup, FormControl } from "@angular/forms";
+import { PersonaService } from "app/service/persona.service";
+import { Conceptos } from "app/config/app-settings";
+import { AlumnoService } from "app/service/alumno.service";
+import { Alumno, Persona, PersonaAlumno } from "app/models/models";
+import { MontoConceptoService } from "app/service/monto_concepto.service";
+import { Notify } from "notiflix/build/notiflix-notify-aio";
+import { PagosService } from "app/service/pagos.service";
+import { element } from "protractor";
+import { ConceptoPagoService } from "app/service/concepto_pago.service";
+import { Report } from "notiflix";
+import { PdfComponent } from "app/pdf/pdf.component";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+import * as moment from "moment";
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+moment.locale("es");
 
 @Component({
-  selector: 'app-typography',
-  templateUrl: './typography.component.html',
-  styleUrls: ['./typography.component.css']
+  selector: "app-typography",
+  templateUrl: "./typography.component.html",
+  styleUrls: ["./typography.component.css"],
 })
-
 export class TypographyComponent {
-
+  @Output() listaCreada = new EventEmitter<PersonaAlumno>();
   formularioCobro = new FormGroup({
-    cedula: new FormControl(''),
-    tipoPago: new FormControl(''),
-    importe: new FormControl(''),
-  })
+    cedula: new FormControl(""),
+    nombre: new FormControl(""),
+    tipoPago: new FormControl(""),
+    importe: new FormControl(""),
+  });
 
   conceptos: string[] = [];
   persona: Persona;
-  alumnos: Alumno[] =[];
+  alumnos: Alumno[] = [];
   alumno: Alumno;
   tipoPago: string;
 
-  nombre: String = '';
+  listaPagos: any[] = [];
+  displayedColumns: string[] = ["concepto", "importe"];
+  viewPagos: Boolean = true;
 
-  constructor(private personaService: PersonaService,
-    private alumnoService: AlumnoService, 
-    private montoConceptoService: MontoConceptoService ) {
-    Object.values(Conceptos).forEach(concepto => {
-      this.conceptos = [...this.conceptos, concepto]
+  nombre: String = "";
+  importe: number;
+
+  constructor(
+    private personaService: PersonaService,
+    private alumnoService: AlumnoService,
+    private montoConceptoService: MontoConceptoService,
+    private pagoService: PagosService,
+    private conceptoPago: ConceptoPagoService
+  ) {
+    Object.values(Conceptos).forEach((concepto) => {
+      this.conceptos = [...this.conceptos, concepto];
     });
 
-    this.alumnoService.getAll().subscribe(response => {
+    this.alumnoService.getAll().subscribe((response) => {
       this.alumnos = response;
-      console.log(this.alumnos)
-    })
+      console.log(this.alumnos);
+    });
+
+    this.formularioCobro.controls["nombre"].disable();
+    this.formularioCobro.controls["importe"].disable();
   }
 
-  guardarCobro() {
-    console.log(this.formularioCobro.value);
-    this.limpiarFormulario()
+  finalizarPago() {
+    this.createPdf(this.listaPagos,this.persona.nombre +" "+this.persona.apellido ,this.formularioCobro.value.cedula);
+    let monto_total = () => {
+      let monto = 0;
+      this.listaPagos.forEach((element) => {
+        monto += element.importe;
+      });
+      return monto;
+    };
+    this.pagoService
+      .create({
+        monto_total: monto_total(),
+        id_alumno: this.alumno.id,
+      })
+      .subscribe((res) => {
+        this.listaPagos.forEach((element, index) => {
+          this.conceptoPago
+            .create({
+              concepto: element.concepto,
+              monto: element.importe,
+              id_pagos: res.id,
+            })
+            .subscribe(() => {
+              if (index === this.listaPagos.length - 1) {
+                this.formularioCobro.reset();
+                Report.success(
+                  "Éxito",
+                  "Los pagos fueron registrados con éxito",
+                  "Ok"
+                );
+                this.listaPagos = [];
+                this.viewPagos = false;
+              }
+            });
+        });
+      });
+  }
+
+  guardarPago() {
+    // console.log(this.formularioCobro.value);
+    // console.log(this.formularioCobro.controls['importe'].value)
+    this.listaPagos = [
+      ...this.listaPagos,
+      {
+        concepto: this.formularioCobro.controls["tipoPago"].value,
+        importe: this.formularioCobro.controls["importe"].value,
+      },
+    ];
+
+    if (this.listaPagos.length > 0) {
+      this.viewPagos = true;
+    }
+
+    // this.limpiarFormulario()
+    this.formularioCobro.patchValue({ importe: "" });
+    this.formularioCobro.patchValue({ tipoPago: "" });
+  }
+
+  cancelarPago() {
+    this.listaPagos = [];
+    this.viewPagos = false;
+    this.formularioCobro.reset();
   }
 
   cedulaChange(event) {
-    this.personaService.getPersona(event.target.value)
-      .subscribe(response => {
-        this.persona = response;
-        this.nombre = this.persona.nombre + ' ' + this.persona.apellido;
-        console.log(response)
-        this.alumnos.forEach(alumno => {
-          if (alumno.sa_persona.id === this.persona.id) {
-            this.alumno = alumno;
-          }
-        })
-        console.log(this.alumnos)
-        this.formularioCobro.patchValue({'importe': ''})
-        // this.conceptoChange(null);
-      })
+    this.personaService.getPersona(event.target.value).subscribe((response) => {
+      this.persona = response;
+      // this.nombre = this.persona.nombre + ' ' + this.persona.apellido;
+      this.formularioCobro.patchValue({
+        nombre: this.persona.nombre + " " + this.persona.apellido,
+      });
+      // console.log(response)
+      this.alumnos.forEach((alumno) => {
+        if (alumno.sa_persona.id === this.persona.id) {
+          this.alumno = alumno;
+        }
+      });
+      // console.log(this.alumnos)
+      this.formularioCobro.patchValue({ importe: "" });
+      // this.conceptoChange(null);
+    });
   }
 
   conceptoChange(concepto) {
     // console.log("disparado")
     this.tipoPago = concepto.value;
-    if (this.tipoPago === 'Cuota') {
-      this.montoConceptoService.get(this.alumno.sa_curso.cuota).subscribe(res => {
-        let importe = res.monto;
-        this.formularioCobro.patchValue({'importe': importe})
-      })
-    } else if (this.tipoPago == 'Vestuario') {
-        this.formularioCobro.patchValue({'importe': this.alumno.vestuario})
-    } else if (this.tipoPago == 'Entrada') {
-      this.formularioCobro.patchValue({'importe': this.alumno.entrada})
-    } else if (this.tipoPago == 'Derecho a examen') {
-      this.montoConceptoService.get(this.alumno.sa_curso.examen).subscribe(res => {
-        let importe = null;
-        if (this.alumno.sa_curso.nombre === 'Pre-Ballet' || this.alumno.sa_curso.nombre === 'Preparatorio') {
-          importe = 150000;
-        } else {
-          importe = res.monto * this.alumno.cantidad_materias;
-        }
-        this.formularioCobro.patchValue({'importe': importe})
-      })
+    if (this.tipoPago === "Cuota") {
+      this.montoConceptoService
+        .get(this.alumno.sa_curso.cuota)
+        .subscribe((res) => {
+          this.importe = res.monto;
+          this.formularioCobro.patchValue({ importe: this.importe });
+        });
+    } else if (this.tipoPago == "Vestuario") {
+      this.formularioCobro.patchValue({ importe: this.alumno.vestuario });
+    } else if (this.tipoPago == "Entrada") {
+      this.formularioCobro.patchValue({ importe: this.alumno.entrada });
+    } else if (this.tipoPago == "Derecho a examen") {
+      this.montoConceptoService
+        .get(this.alumno.sa_curso.examen)
+        .subscribe((res) => {
+          this.importe = null;
+          if (
+            this.alumno.sa_curso.nombre === "Pre-Ballet" ||
+            this.alumno.sa_curso.nombre === "Preparatorio"
+          ) {
+            this.importe = 150000;
+          } else {
+            this.importe = res.monto * this.alumno.cantidad_materias;
+          }
+          this.formularioCobro.patchValue({ importe: this.importe });
+        });
     }
   }
 
   limpiarFormulario() {
     this.formularioCobro.reset();
-    this.nombre = ''
+    this.nombre = "";
+  }
+
+  createPdf(listaPagos, nombre, documento) {
+    const temp = 2;
+    var d = new Date();
+    let monto = 0;
+    let vector: any[]=[];
+  listaPagos.forEach((element) => {
+    monto += element.importe;
+  });
+    console.log(monto);
+    console.log(listaPagos.length);
+
+    if (listaPagos.length<5){
+      let i=0;
+      for (i;i<5;i++){
+        if(i<listaPagos.length){
+        vector[i]=listaPagos[i];
+      }else{
+        vector[i]={
+          concepto: "      ",
+          importe: "       ",
+        }
+      }
+      }
+    }else{
+      let i=0;
+      for (i;i<5;i++){
+        vector[i]=listaPagos[i];
+      }
+    }
+    console.log(vector);
+    var dd = {
+      content: [
+        { text: "Recibo", style: "header" },
+        {
+          style: "tableExample",
+          color: "#444",
+          table: {
+            widths: [200, 50, 75, 75],
+            // heights: [20, 'auto', 'auto'],
+            // keepWithHeaderRows: 1,
+            body: [
+              [
+                {
+                  rowSpan: 3,
+                  colSpan: 2,
+                  text: "Escuela de Danzas\nPykasu Jeroky\nde Lourdes Nataloni",
+                  alignment: "center",
+                  fontSize: 12,
+                },
+                "",
+                {
+                  colSpan: 2,
+                  text: "Recibo de Dinero",
+                  alignment: "center",
+                  fontSize: 12,
+                  bold: true,
+                },
+                "",
+              ],
+              // [{text: 'Header with Colspan = 2', style: 'tableHeader', colSpan: 2, alignment: 'center'}, {}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
+              // [{text: 'Header 1', style: 'tableHeader', alignment: 'center'}, {text: 'Header 2', style: 'tableHeader', alignment: 'center'}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
+              ["", "", { colSpan: 2, text: "Gs.:"+ monto, fontSize: 12 }, ""],
+              ["", "", { colSpan: 2, text: "N°.:", fontSize: 12 }, ""],
+              [
+                {
+                  colSpan: 4,
+                  text: "Fecha de emision " + moment(d).format("D MMMM YYYY"),
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                {
+                  colSpan: 4,
+                  text: "Recibimos a Favor de "+ nombre,
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                {
+                  colSpan: 4,
+                  text: "Con C.I. N.: "+ documento,
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                { text: "Conceptos de pago" },
+                "Cantidad",
+                "Precio Unitaro",
+                "Precio Total",
+              ],
+              [
+                vector[0].concepto,
+                "",
+                vector[0].importe,
+                vector[0].importe,
+              ],
+              [
+                vector[1].concepto,
+                "",
+                vector[1].importe,
+                vector[1].importe,
+              ],
+              [
+                vector[2].concepto,
+                "",
+                vector[2].importe,
+                vector[2].importe,
+              ],
+              [
+                vector[3].concepto,
+                "",
+                vector[3].importe,
+                vector[3].importe,
+              ],
+              [
+                vector[4].concepto,
+                "",
+                vector[4].importe,
+                vector[4].importe,
+              ],
+              [{ colSpan: 3, text: "Total" }, "", "", monto],
+            ],
+          },
+        },
+        { text: "----------------------------------------------------------------------", style: "header" },
+        {
+          style: "tableExample",
+          color: "#444",
+          table: {
+            widths: [200, 50, 75, 75],
+            // heights: [20, 'auto', 'auto'],
+            // keepWithHeaderRows: 1,
+            body: [
+              [
+                {
+                  rowSpan: 3,
+                  colSpan: 2,
+                  text: "Escuela de Danzas\nPykasu Jeroky\nde Lourdes Nataloni",
+                  alignment: "center",
+                  fontSize: 12,
+                },
+                "",
+                {
+                  colSpan: 2,
+                  text: "Recibo de Dinero",
+                  alignment: "center",
+                  fontSize: 12,
+                  bold: true,
+                },
+                "",
+              ],
+              // [{text: 'Header with Colspan = 2', style: 'tableHeader', colSpan: 2, alignment: 'center'}, {}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
+              // [{text: 'Header 1', style: 'tableHeader', alignment: 'center'}, {text: 'Header 2', style: 'tableHeader', alignment: 'center'}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
+              ["", "", { colSpan: 2, text: "Gs.:"+ monto, fontSize: 12 }, ""],
+              ["", "", { colSpan: 2, text: "N°.:", fontSize: 12 }, ""],
+              [
+                {
+                  colSpan: 4,
+                  text: "Fecha de emision " + moment(d).format("D MMMM YYYY"),
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                {
+                  colSpan: 4,
+                  text: "Recibimos a Favor de "+ nombre,
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                {
+                  colSpan: 4,
+                  text: "Con C.I. N.: "+ documento,
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                { text: "Conceptos de pago" },
+                "Cantidad",
+                "Precio Unitaro",
+                "Precio Total",
+              ],
+              [
+                vector[0].concepto,
+                "",
+                vector[0].importe,
+                vector[0].importe,
+              ],
+              [
+                vector[1].concepto,
+                "",
+                vector[1].importe,
+                vector[1].importe,
+              ],
+              [
+                vector[2].concepto,
+                "",
+                vector[2].importe,
+                vector[2].importe,
+              ],
+              [
+                vector[3].concepto,
+                "",
+                vector[3].importe,
+                vector[3].importe,
+              ],
+              [
+                vector[4].concepto,
+                "",
+                vector[4].importe,
+                vector[4].importe,
+              ],
+              [{ colSpan: 3, text: "Total" }, "", "", monto],
+            ],
+          },
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 0, 0, 10],
+        },
+        subheader: {
+          fontSize: 16,
+          bold: true,
+          margin: [0, 10, 0, 5],
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15],
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 13,
+          color: "black",
+        },
+      },
+      defaultStyle: {
+        // alignment: 'justify'
+      },
+    };
+
+    const pdfimpr = pdfMake.createPdf(dd);
+    pdfimpr.open();
   }
 }

@@ -1,0 +1,50 @@
+table {
+    width: 100%;
+    box-shadow: none;
+    background-color: #ffffff;
+  }
+
+  #titulo {
+    color: #E4F1F4 !important;
+  }
+
+  .container{
+      padding: 10px !important;
+      height:100% !important;
+      display: inline-block !important;
+      margin-right:auto !important;
+  }
+  #formulario{
+    display: flex;
+  justify-content: center;
+  /* transform: translate(9%, 0%); */
+  }
+
+  #panel{
+      text-align: center !important;
+      color: #E4F1F4 !important;
+      font-weight: 800 !important;
+      font-size: 30px !important;
+  }
+
+  #recuadro{
+      background-color: #8DB9CA !important;
+  }
+
+  button{
+    background-color: #48A9C5 !important;
+  }
+  #tabla{ 
+    background-color: #ffffff !important;
+  }
+  #cancelar{
+      color: black !important;
+      background-color: #fff !important;
+
+  }
+
+table {
+  width: 100%;
+  box-shadow: none;
+  background-color: #E4F1F4;
+} 

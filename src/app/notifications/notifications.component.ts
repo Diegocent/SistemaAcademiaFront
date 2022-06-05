@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Report } from 'notiflix/build/notiflix-report-aio';
 declare var $: any;
 @Component({
   selector: 'app-notifications',
@@ -7,7 +8,13 @@ declare var $: any;
 })
 export class NotificationsComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+    Report.warning(
+      'En Construcción',
+      'Esta funcionalidad se encuentra en proceso de desarrollo.',
+      'Ok',
+      );
+   }
   showNotification(from, align){
       const type = ['','info','success','warning','danger'];
 

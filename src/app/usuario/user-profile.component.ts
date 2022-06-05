@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { PersonaService } from 'app/service/persona.service';
 import { AlumnoService } from 'app/service/alumno.service';
 import { CursoService } from 'app/service/curso.service';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { Report } from 'notiflix/build/notiflix-report-aio';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Curso } from 'app/models/models';
+import { Curso, PersonaAlumno } from 'app/models/models';
 import { MontoConceptoService } from 'app/service/monto_concepto.service';
 @Component({
   selector: 'app-user-profile',
@@ -13,6 +13,9 @@ import { MontoConceptoService } from 'app/service/monto_concepto.service';
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent implements OnInit {
+
+  @Input() edit;
+  // @Input() data: PersonaAlumno;
 
   beneficiario: boolean = false;
   beca: boolean = false;
@@ -43,7 +46,8 @@ export class UserProfileComponent implements OnInit {
     private personaService: PersonaService,
     private alumnoService: AlumnoService,
     private cursoService: CursoService,
-    private montoConceptoService: MontoConceptoService) {}
+    private montoConceptoService: MontoConceptoService) {
+    }
 
 
   ngOnInit() {
