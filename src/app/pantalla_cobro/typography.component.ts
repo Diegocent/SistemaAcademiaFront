@@ -68,7 +68,8 @@ export class TypographyComponent {
 
     this.pagoService.create({
       'monto_total': monto_total(),
-      'id_alumno': this.alumno.id
+      'id_alumno': this.alumno.id,
+      'fecha': new Date().toLocaleDateString()
     }).subscribe(res => {
       this.listaPagos.forEach((element, index) => {
         this.conceptoPago.create({
