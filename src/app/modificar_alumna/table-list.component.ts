@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Report } from 'notiflix/build/notiflix-report-aio';
 import { Confirm } from 'notiflix/build/notiflix-confirm-aio';
 import { Alumno, Persona, PersonaAlumno } from 'app/models/models';
@@ -11,6 +11,7 @@ import { MontoConceptoService } from 'app/service/monto_concepto.service';
   styleUrls: ['./table-list.component.css']
 })
 export class TableListComponent implements OnInit {
+  // @Output() eventopersona =new EventEmitter<Alumno>;
 
   personas: Persona[] = [];
   alumnos: Alumno[] = [];

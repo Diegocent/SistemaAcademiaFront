@@ -1,0 +1,86 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header" id="recuadro">
+            <h4 class="card-title" id="panel">Configuración de Costos</h4>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="formulario">
+              <div class="row">
+                <div class="col-md-4">
+                  <mat-form-field class="example-full-width">
+                    <!-- <mat-select
+                                  placeholder="Tipo de pago"
+                                  (selectionChange)="conceptoChange($event)"
+                                  formControlName="tipoPago"
+                                > -->
+                    <mat-select
+                      placeholder="Cursos"
+                      formControlName="cursoSeleccionado"
+                    >
+                      <mat-option
+                        *ngFor="let curso of cursos"
+                        [value]="curso"
+                        >{{ curso.nombre }}</mat-option
+                      >
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                  <mat-form-field class="example-full-width">
+                    <!-- <mat-select
+                                  placeholder="Tipo de pago"
+                                  (selectionChange)="conceptoChange($event)"
+                                  formControlName="tipoPago"
+                                > -->
+                    <mat-select
+                      placeholder="Tipo de pago"
+                      formControlName="tipoPago"
+                    >
+                      <mat-option
+                        *ngFor="let concepto of conceptos"
+                        [value]="concepto.id"
+                        >{{ concepto.nombre }}</mat-option
+                      >
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                  <mat-form-field class="example-full-width">
+                    <input
+                      matInput
+                      formControlName="monto"
+                      placeholder="Monto"
+                      type="number"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+              <button mat-raised-button class="btn btn-danger pull-right" (click)="modificar()">
+                Guardar
+              </button>
+              <div class="clearfix"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="row">
+  <div class="col-md-6">
+    <mat-form-field class="example-full-width">
+      <mat-select placeholder="Tipo de pago" formControlName="tipoPago">
+          <mat-option *ngFor="let concepto of conceptos" [value]="concepto">{{concepto}}</mat-option>
+        </mat-select> 
+    </mat-form-field>
+  </div>
+  <div class="col-md-6">
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Importe" type="number" formControlName="importe">
+    </mat-form-field>
+  </div>
+</div> -->

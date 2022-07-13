@@ -3,22 +3,23 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { URL } from 'app/config/app-settings'; 
 
-const baseUrl = `${URL}/api/monto_concepto/`;
+const baseUrl = `${URL}/api/concepto`;
+
 
 @Injectable({
   providedIn: 'root'
 })
-export class MontoConceptoService {
+export class ConceptoService {
 
-  constructor(private http: HttpClient) { }
+constructor(private http: HttpClient) { }
 
-  getAll(): Observable<any> {
-    return this.http.get(`${baseUrl}`);
-  }
+getAll(): Observable<any> {
+  return this.http.get(`${baseUrl}`);
+}
 
-  get(id): Observable<any> {
-    return this.http.get(`${baseUrl}/${id}`);
-  }
+get(id): Observable<any> {
+  return this.http.get(`${baseUrl}/${id}`);
+}
 
 //   create(data): Observable<any> {
 //     return this.http.post(baseUrl, data);

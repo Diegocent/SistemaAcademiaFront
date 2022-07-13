@@ -1,16 +1,15 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { URL } from "app/config/app-settings";
 
-const baseUrl = 'http://localhost:8080/api/pagos/';
-// const baseUrl = 'https://app-sistemaacademia.herokuapp.com/api/pagos/';
+const baseUrl = `${URL}/api/pagos/`;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class PagosService {
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getAll(): Observable<any> {
     return this.http.get(`${baseUrl}`);
@@ -31,5 +30,4 @@ export class PagosService {
   delete(id): Observable<any> {
     return this.http.delete(`${baseUrl}/${id}`);
   }
-
 }

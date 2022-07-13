@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { URL } from 'app/config/app-settings'; 
 
-const baseUrl = 'http://localhost:8080/api/alumno/';
-// const baseUrl = 'https://app-sistemaacademia.herokuapp.com/api/alumno/';
+const baseUrl = `${URL}/api/alumno/`;
 
 @Injectable({
   providedIn: 'root'

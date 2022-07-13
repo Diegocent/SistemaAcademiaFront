@@ -9,7 +9,7 @@ import { TableListComponent } from '../../modificar_alumna/table-list.component'
 import { TypographyComponent } from '../../pantalla_cobro/typography.component';
 import { IconsComponent } from '../../informe_diario/icons.component';
 import { MapsComponent } from '../../informe_fechas/maps.component';
-import { NotificationsComponent } from '../../notifications/notifications.component';
+import { NotificationsComponent } from '../../configuracion/notifications.component';
 import { UpgradeComponent } from '../../upgrade/upgrade.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatButtonModule} from '@angular/material/button';
