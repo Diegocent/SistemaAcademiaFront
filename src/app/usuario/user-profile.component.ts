@@ -5,7 +5,7 @@ import { CursoService } from 'app/service/curso.service';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { Report } from 'notiflix/build/notiflix-report-aio';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Curso, PersonaAlumno } from 'app/models/models';
+import { Alumno, Curso, Persona, PersonaAlumno } from 'app/models/models';
 import { MontoConceptoService } from 'app/service/monto_concepto.service';
 @Component({
   selector: 'app-user-profile',
@@ -15,7 +15,8 @@ import { MontoConceptoService } from 'app/service/monto_concepto.service';
 export class UserProfileComponent implements OnInit {
 
   @Input() edit;
-  // @Input() data: PersonaAlumno;
+  @Input() personaEdit: Persona;
+  @Input() alumnoEdit: Alumno;
 
   beneficiario: boolean = false;
   beca: boolean = false;
@@ -32,7 +33,7 @@ export class UserProfileComponent implements OnInit {
     derechoExamen: new FormControl(''),
     curso: new FormControl(''),
     descuento: new FormControl(''),
-    cantidadDescuento: new FormControl('')
+    cantidadDescuento: new FormControl(''),
   })
 
   becaFuncionario(e) {
@@ -40,6 +41,8 @@ export class UserProfileComponent implements OnInit {
     if (e.value === 'descuento'){ this.beneficiario = true; this.beca = false } 
     if (e.value === 'beca') { this.beca = true; this.beneficiario = false}
     if (e.value === 'ninguno') { this.beca = false; this.beneficiario = false }
+
+    console.log(this.formularioRegistro.value.opcionesDescuento)
   }
 
   constructor(
@@ -54,6 +57,34 @@ export class UserProfileComponent implements OnInit {
     this.cursoService.getAll().subscribe(result => {
       this.cursos = result;
     })
+    if (this.personaEdit !== undefined || this.personaEdit !== undefined) { //es para modificar
+      console.log('holaaa', this.alumnoEdit)
+      this.formularioRegistro.patchValue({
+        'cedula': this.personaEdit.documento,
+        'apellido': this.personaEdit.apellido,
+        'nombre': this.personaEdit.nombre,
+        'cantidadMaterias': this.alumnoEdit.cantidad_materias,
+      })
+
+      this.cursoService.get(this.alumnoEdit.id_curso).subscribe(curso => {
+        this.formularioRegistro.patchValue({
+          'curso': curso
+        })
+        console.log("seteamos el curso");
+        
+      })
+      // if (this.alumnoEdit.descuento > 0) {
+      //   this.montoConceptoService.get(this.alumnoEdit.id_curso).subscribe(concepto => {
+      //     let cuotaCurso = concepto.monto;
+      //     if (this.alumnoEdit.descuento === (cuotaCurso/2)) {
+      //       let becaRadio = document.getElementById("beca");
+      //       becaRadio.checked = true;
+      //     }
+      //   })
+      // }
+    }
+    console.log(this.personaEdit)
+    console.log(this.alumnoEdit)
   }
 
   guardarAlumno() {

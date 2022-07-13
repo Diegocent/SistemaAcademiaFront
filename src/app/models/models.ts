@@ -14,6 +14,7 @@ export interface Curso {
 export interface Alumno {
     id: number;
     cantidad_materias: number;
+    descuento: number;
     cuota_anual: number;
     derecho_examen: number;
     vestuario: number;
