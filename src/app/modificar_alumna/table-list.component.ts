@@ -17,7 +17,10 @@ export class TableListComponent implements OnInit {
   alumnos: Alumno[] = [];
   // personaAlumno: PersonaAlumno[] = [];
   viewTable: boolean = true;
-  data: Persona;
+
+  //PARA ENVIAR A MODIFICAR
+  personaModificar: Persona;
+  alumnoModificar: Alumno;
 
   dataSource: PersonaAlumno[] = []
   displayedColumns: string[] = ['cedula', 'nombre', 'curso', 'vestuario', 'entrada', 'cantidad_materias', 'derecho_examen', 'cuota', 'accion'];
@@ -90,14 +93,15 @@ export class TableListComponent implements OnInit {
   }
 
   modificarAlumno(data) {
-    Report.warning(
-      'En Construcción',
-      'Esta funcionalidad se encuentra en proceso de desarrollo.',
-      'Ok',
-      );
+    // Report.warning(
+    //   'En Construcción',
+    //   'Esta funcionalidad se encuentra en proceso de desarrollo.',
+    //   'Ok',
+    //   );
     // console.log(data.persona)
-    // this.data = data.persona;
-    // // console.log('dataPersonaAlumno', this.data)
-    // this.viewTable = !this.viewTable;
+    this.personaModificar = data.persona;
+    this.alumnoModificar = data.alumno;
+    // console.log('dataPersonaAlumno', this.data)
+    this.viewTable = !this.viewTable;
   }
 }
