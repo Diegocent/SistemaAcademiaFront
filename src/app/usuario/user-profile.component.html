@@ -51,16 +51,16 @@
                                 </div> -->
                             </div>
                             <div class="row">
-                                <!-- <div class="col-md-5">
-                                  <mat-form-field class="example-full-width">
-                                    <input matInput placeholder="Derecho a examen" type="number" formControlName="derechoExamen">
-                                  </mat-form-field>
-                                </div> -->
                                 <div class="col-md-5">
                                   <mat-form-field class="example-full-width">
                                     <mat-select placeholder="Cursos" formControlName="curso" id="cursos">
                                         <mat-option *ngFor="let curso of cursos" [value]="curso">{{curso.nombre}}</mat-option>
                                       </mat-select> 
+                                  </mat-form-field>
+                                </div>
+                                <div class="col-md-5">
+                                  <mat-form-field class="example-full-width">
+                                    <input matInput placeholder="Cantidad de cuotas" type="number" formControlName="cantidadcuotas">
                                   </mat-form-field>
                                 </div>
                             </div>

@@ -47,7 +47,8 @@ export class TypographyComponent {
     Object.values(Conceptos).forEach((concepto) => {
       this.conceptos = [...this.conceptos, concepto];
     });
-
+    // 10-this.alumno.cantidad_materias
+    // this.alumno.cantidad_cuota = actual - 1
     this.alumnoService.getAll().subscribe((response) => {
       this.alumnos = response;
       console.log(this.alumnos);
@@ -65,12 +66,16 @@ export class TypographyComponent {
       });
       return monto;
     };
+    var today = new Date();
+    var dd = today.getDate();
 
+    var mm = today.getMonth() + 1;
+    var yyyy = today.getFullYear();
     this.pagoService
       .create({
         monto_total: monto_total(),
         id_alumno: this.alumno.id,
-        fecha: new Date().toLocaleDateString(),
+        fecha: mm + "/" + dd + "/" + yyyy,
       })
       .subscribe((res) => {
         this.listaPagos.forEach((element, index) => {
