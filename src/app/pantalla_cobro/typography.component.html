@@ -49,7 +49,19 @@
                       </mat-select>
                     </mat-form-field>
                   </div>
-                  <div class="col-md-6">
+                  <div [ngClass]="pagoCuota ? 'col-md-3': 'hide-element' ">
+                    <mat-form-field class="example-full-width">
+                      <input
+                        matInput
+                        placeholder="Cantidad de cuotas"
+                        type="number"
+                        formControlName="cantidadCuota"
+                        style="color: black"
+                        (change)="cantidadCuotaChange($event)"
+                      />
+                    </mat-form-field>
+                  </div>
+                  <div [ngClass]="pagoCuota ? 'col-md-3': 'col-md-6' ">
                     <mat-form-field class="example-full-width">
                       <input
                         matInput

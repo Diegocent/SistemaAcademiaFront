@@ -15,7 +15,7 @@ export interface Alumno {
     id: number;
     cantidad_materias: number;
     descuento: number;
-    cuota_anual: number;
+    cantidad_cuotas: number;
     derecho_examen: number;
     vestuario: number;
     id_curso: number;
