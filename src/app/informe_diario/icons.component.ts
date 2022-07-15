@@ -11,7 +11,7 @@ import { Loading } from 'notiflix/build/notiflix-loading-aio';
   styleUrls: ['./icons.component.css']
 })
 export class IconsComponent{
-  displayedColumns: string[] = ['cedula', 'nombre', 'curso', 'concepto', 'importe'];
+  displayedColumns: string[] = ['cedula', 'nombre', 'curso', 'concepto', 'importe','fecha'];
   // dataSource = ELEMENT_DATA;
 
   dataSource: any = [];
@@ -28,15 +28,20 @@ export class IconsComponent{
             conceptos.forEach(concepto => {
               if (concepto.id_pagos === res[index].id) {
                 this.dataSource = [...this.dataSource, {
-                  'pago': res,
+                  'pago': pago,
                   'datosAlumno': datosAlumno,
-                  'concepto': concepto
+                  'concepto': concepto,
+                  'fecha':pago.fecha
+
                 }]
               }
             })
           })
+          console.log(this.dataSource)
         })
       })
     })
   }
+
+  
 }
