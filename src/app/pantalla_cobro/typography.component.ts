@@ -22,6 +22,7 @@ export class TypographyComponent {
     nombre: new FormControl(""),
     tipoPago: new FormControl(""),
     importe: new FormControl(""),
+    cantidadCuota: new FormControl("1")
   });
 
   conceptos: string[] = [];
@@ -36,6 +37,10 @@ export class TypographyComponent {
 
   nombre: String = "";
   importe: number;
+  pagoCuota: Boolean = false;
+
+  cantidadCuota = 1;
+  cuotaActual = 0;
 
   constructor(
     private personaService: PersonaService,
@@ -101,24 +106,54 @@ export class TypographyComponent {
       });
   }
 
+  checkFormulario() {
+    if (this.formularioCobro.value.tipoPago === "" || this.formularioCobro.value.cedula === "") return false;
+    return true;
+  }
+
   guardarPago() {
-    // console.log(this.formularioCobro.value);
-    // console.log(this.formularioCobro.controls['importe'].value)
-    this.listaPagos = [
-      ...this.listaPagos,
-      {
-        concepto: this.formularioCobro.controls["tipoPago"].value,
-        importe: this.formularioCobro.controls["importe"].value,
-      },
-    ];
-
-    if (this.listaPagos.length > 0) {
-      this.viewPagos = true;
+    if (this.checkFormulario() === false) {
+      Notify.warning("Se deben completar todos los campos.")
+    } else {
+      if (this.cuotaActual + 1 > 10) {
+        Notify.info('Ya no quedan cuotas por pagar.');
+      } else {
+        if (this.formularioCobro.value.cantidadCuota > 1) {
+          for (let i = 0; i < this.formularioCobro.value.cantidadCuota; i++) {
+            this.listaPagos = [
+              ...this.listaPagos,
+              {
+                concepto: this.formularioCobro.controls["tipoPago"].value + (this.formularioCobro.controls["tipoPago"].value === "Cuota" ? (
+                  //aca se viene el desmadre
+                  ' ' + ++this.cuotaActual
+                ) : ""),
+                importe: this.formularioCobro.controls["importe"].value/this.cantidadCuota,
+              },
+            ];
+          }
+        } else {
+          this.listaPagos = [
+            ...this.listaPagos,
+            {
+              concepto: this.formularioCobro.controls["tipoPago"].value + (this.formularioCobro.controls["tipoPago"].value === "Cuota" ? (
+                //aca se viene el desmadre
+                ' ' + ++this.cuotaActual
+              ) : ""),
+              importe: this.formularioCobro.controls["importe"].value,
+            },
+          ];
+        }
+      }
+  
+  
+      if (this.listaPagos.length > 0) {
+        this.viewPagos = true;
+      }
+  
+      // this.limpiarFormulario()
+      this.formularioCobro.patchValue({ importe: "" });
+      this.formularioCobro.patchValue({ tipoPago: "" });
     }
-
-    // this.limpiarFormulario()
-    this.formularioCobro.patchValue({ importe: "" });
-    this.formularioCobro.patchValue({ tipoPago: "" });
   }
 
   cancelarPago() {
@@ -138,23 +173,33 @@ export class TypographyComponent {
       this.alumnos.forEach((alumno) => {
         if (alumno.sa_persona.id === this.persona.id) {
           this.alumno = alumno;
+          this.cuotaActual = 10 - alumno.cantidad_cuotas
         }
       });
-      // console.log(this.alumnos)
       this.formularioCobro.patchValue({ importe: "" });
-      // this.conceptoChange(null);
     });
+  }
+
+  cantidadCuotaChange(event) {
+    this.cantidadCuota = event.target.value
+    this.formularioCobro.patchValue(
+      {
+        importe: this.importe * event.target.value
+      }
+    )
   }
 
   conceptoChange(concepto) {
     // console.log("disparado")
     this.tipoPago = concepto.value;
+    this.pagoCuota = false;
     if (this.tipoPago === "Cuota") {
+      this.pagoCuota = true;
       this.montoConceptoService
         .get(this.alumno.sa_curso.cuota)
         .subscribe((res) => {
           this.importe = res.monto;
-          this.formularioCobro.patchValue({ importe: this.importe });
+          this.formularioCobro.patchValue({ importe: this.importe*this.formularioCobro.value.cantidadCuota });
         });
     } else if (this.tipoPago == "Vestuario") {
       this.formularioCobro.patchValue({ importe: this.alumno.vestuario });

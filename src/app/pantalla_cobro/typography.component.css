@@ -48,3 +48,8 @@ table {
   box-shadow: none;
   background-color: #E4F1F4;
 } 
+
+.hide-element {
+  display: none;
+  visibility: hidden;
+}
