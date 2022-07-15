@@ -10,6 +10,11 @@ import { PagosService } from "app/service/pagos.service";
 import { element } from "protractor";
 import { ConceptoPagoService } from "app/service/concepto_pago.service";
 import { Report } from "notiflix";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+import * as moment from "moment";
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
 
 @Component({
   selector: "app-typography",
@@ -59,6 +64,7 @@ export class TypographyComponent {
   }
 
   finalizarPago() {
+    this.createPdf(this.listaPagos,this.persona.nombre +' '+ this.persona.apellido,this.formularioCobro.value.cedula);
     let monto_total = () => {
       let monto = 0;
       this.listaPagos.forEach((element) => {
@@ -95,6 +101,7 @@ export class TypographyComponent {
                 );
                 this.listaPagos = [];
                 this.viewPagos = false;
+                
               }
             });
         });
@@ -181,5 +188,275 @@ export class TypographyComponent {
   limpiarFormulario() {
     this.formularioCobro.reset();
     this.nombre = "";
+  }
+
+  createPdf(listaPagos, nombre, documento) {
+    const temp = 2;
+    var d = new Date();
+    let monto = 0;
+    let vector: any[]=[];
+  listaPagos.forEach((element) => {
+    monto += element.importe;
+  });
+    console.log(monto);
+    console.log(listaPagos.length);
+
+    if (listaPagos.length<5){
+      let i=0;
+      for (i;i<5;i++){
+        if(i<listaPagos.length){
+        vector[i]=listaPagos[i];
+      }else{
+        vector[i]={
+          concepto: "      ",
+          importe: "       ",
+        }
+      }
+      }
+    }else{
+      let i=0;
+      for (i;i<5;i++){
+        vector[i]=listaPagos[i];
+      }
+    }
+    console.log(vector);
+    var dd = {
+      content: [
+        { text: "Recibo", style: "header" },
+        {
+          style: "tableExample",
+          color: "#444",
+          table: {
+            widths: [200, 50, 75, 75],
+            // heights: [20, 'auto', 'auto'],
+            // keepWithHeaderRows: 1,
+            body: [
+              [
+                {
+                  rowSpan: 3,
+                  colSpan: 2,
+                  text: "Escuela de Danzas\nPykasu Jeroky\nde Lourdes Nataloni",
+                  alignment: "center",
+                  fontSize: 12,
+                },
+                "",
+                {
+                  colSpan: 2,
+                  text: "Recibo de Dinero",
+                  alignment: "center",
+                  fontSize: 12,
+                  bold: true,
+                },
+                "",
+              ],
+              // [{text: 'Header with Colspan = 2', style: 'tableHeader', colSpan: 2, alignment: 'center'}, {}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
+              // [{text: 'Header 1', style: 'tableHeader', alignment: 'center'}, {text: 'Header 2', style: 'tableHeader', alignment: 'center'}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
+              ["", "", { colSpan: 2, text: "Gs.:"+ monto, fontSize: 12 }, ""],
+              ["", "", { colSpan: 2, text: "N°.:", fontSize: 12 }, ""],
+              [
+                {
+                  colSpan: 4,
+                  text: "Fecha de emision " + moment(d).format("D MMMM YYYY"),
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                {
+                  colSpan: 4,
+                  text: "Recibimos a Favor de "+ nombre,
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                {
+                  colSpan: 4,
+                  text: "Con C.I. N.: "+ documento,
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                { text: "Conceptos de pago" },
+                "Cantidad",
+                "Precio Unitaro",
+                "Precio Total",
+              ],
+              [
+                vector[0].concepto,
+                "",
+                vector[0].importe,
+                vector[0].importe,
+              ],
+              [
+                vector[1].concepto,
+                "",
+                vector[1].importe,
+                vector[1].importe,
+              ],
+              [
+                vector[2].concepto,
+                "",
+                vector[2].importe,
+                vector[2].importe,
+              ],
+              [
+                vector[3].concepto,
+                "",
+                vector[3].importe,
+                vector[3].importe,
+              ],
+              [
+                vector[4].concepto,
+                "",
+                vector[4].importe,
+                vector[4].importe,
+              ],
+              [{ colSpan: 3, text: "Total" }, "", "", monto],
+            ],
+          },
+        },
+        { text: "----------------------------------------------------------------------", style: "header" },
+        {
+          style: "tableExample",
+          color: "#444",
+          table: {
+            widths: [200, 50, 75, 75],
+            // heights: [20, 'auto', 'auto'],
+            // keepWithHeaderRows: 1,
+            body: [
+              [
+                {
+                  rowSpan: 3,
+                  colSpan: 2,
+                  text: "Escuela de Danzas\nPykasu Jeroky\nde Lourdes Nataloni",
+                  alignment: "center",
+                  fontSize: 12,
+                },
+                "",
+                {
+                  colSpan: 2,
+                  text: "Recibo de Dinero",
+                  alignment: "center",
+                  fontSize: 12,
+                  bold: true,
+                },
+                "",
+              ],
+              // [{text: 'Header with Colspan = 2', style: 'tableHeader', colSpan: 2, alignment: 'center'}, {}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
+              // [{text: 'Header 1', style: 'tableHeader', alignment: 'center'}, {text: 'Header 2', style: 'tableHeader', alignment: 'center'}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
+              ["", "", { colSpan: 2, text: "Gs.:"+ monto, fontSize: 12 }, ""],
+              ["", "", { colSpan: 2, text: "N°.:", fontSize: 12 }, ""],
+              [
+                {
+                  colSpan: 4,
+                  text: "Fecha de emision " + moment(d).format("D MMMM YYYY"),
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                {
+                  colSpan: 4,
+                  text: "Recibimos a Favor de "+ nombre,
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                {
+                  colSpan: 4,
+                  text: "Con C.I. N.: "+ documento,
+                  fontSize: 10,
+                  border: [true, false, true, false],
+                },
+                "",
+                "",
+                "",
+              ],
+              [
+                { text: "Conceptos de pago" },
+                "Cantidad",
+                "Precio Unitaro",
+                "Precio Total",
+              ],
+              [
+                vector[0].concepto,
+                "",
+                vector[0].importe,
+                vector[0].importe,
+              ],
+              [
+                vector[1].concepto,
+                "",
+                vector[1].importe,
+                vector[1].importe,
+              ],
+              [
+                vector[2].concepto,
+                "",
+                vector[2].importe,
+                vector[2].importe,
+              ],
+              [
+                vector[3].concepto,
+                "",
+                vector[3].importe,
+                vector[3].importe,
+              ],
+              [
+                vector[4].concepto,
+                "",
+                vector[4].importe,
+                vector[4].importe,
+              ],
+              [{ colSpan: 3, text: "Total" }, "", "", monto],
+            ],
+          },
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 0, 0, 10],
+        },
+        subheader: {
+          fontSize: 16,
+          bold: true,
+          margin: [0, 10, 0, 5],
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15],
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 13,
+          color: "black",
+        },
+      },
+      defaultStyle: {
+        // alignment: 'justify'
+      },
+    };
+
+    const pdfimpr = pdfMake.createPdf(dd);
+    pdfimpr.open();
   }
 }
