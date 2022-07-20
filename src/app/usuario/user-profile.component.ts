@@ -19,7 +19,9 @@ export class UserProfileComponent implements OnInit {
 
   beneficiario: boolean = false;
   beca: boolean = false;
-  noBecaNoDescuento: boolean = true;
+  noBecaNoDescuento: boolean = false;
+  becado: boolean = false;
+  conDescuento: boolean = false;
   cursos: Curso[] = [];
 
   formularioRegistro = new FormGroup({
@@ -33,7 +35,7 @@ export class UserProfileComponent implements OnInit {
     curso: new FormControl(""),
     descuento: new FormControl(""),
     cantidadDescuento: new FormControl(""),
-    cantidadcuotas: new FormControl(""),
+    cantidadCuotas: new FormControl(""),
   });
 
   becaFuncionario(e) {
@@ -65,7 +67,9 @@ export class UserProfileComponent implements OnInit {
     this.cursoService.getAll().subscribe((result) => {
       this.cursos = result;
     });
-    if (this.personaEdit !== undefined || this.personaEdit !== undefined) {
+
+    if (this.personaEdit !== undefined || this.alumnoEdit !== undefined) {
+      console.log(this.formularioRegistro)
       //es para modificar
       console.log("holaaa", this.alumnoEdit);
       this.formularioRegistro.patchValue({
@@ -73,7 +77,27 @@ export class UserProfileComponent implements OnInit {
         apellido: this.personaEdit.apellido,
         nombre: this.personaEdit.nombre,
         cantidadMaterias: this.alumnoEdit.cantidad_materias,
+        cantidadCuotas: this.alumnoEdit.cantidad_cuotas,
+        // curso: this.alumnoEdit.sa_curso.id
       });
+
+      let cuotaCurso = this.alumnoEdit.sa_curso.cuota;
+      let descuento = this.alumnoEdit.descuento;
+
+      console.log('cuota curso', cuotaCurso)
+      console.log('descuento', descuento)
+
+      if (cuotaCurso == (cuotaCurso/descuento)) {
+        this.becado = true;
+      } else if (descuento === 0) {
+        this.noBecaNoDescuento = true;
+      } else if (descuento > 0) {
+        this.conDescuento = true;
+        this.formularioRegistro.patchValue({
+          cantidadDescuento: this.alumnoEdit.descuento
+        })
+        this.beneficiario = true;
+      }
 
       this.cursoService.get(this.alumnoEdit.id_curso).subscribe((curso) => {
         this.formularioRegistro.patchValue({
@@ -96,8 +120,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   guardarAlumno() {
-    console.log(this.formularioRegistro.value);
-    console.log(this.beneficiario);
+    // console.log(this.beneficiario);
     if (this.formIsValid()) {
       this.personaService
         .checkPersona(this.formularioRegistro.value.cedula)

@@ -205,6 +205,7 @@ export class TypographyComponent {
       this.montoConceptoService
         .get(this.alumno.sa_curso.cuota)
         .subscribe((res) => {
+          console.log('res', res)
           this.importe = res.monto;
           this.formularioCobro.patchValue({ importe: this.importe*this.formularioCobro.value.cantidadCuota });
         });
