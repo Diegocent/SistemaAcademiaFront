@@ -5,7 +5,13 @@ import { CursoService } from "app/service/curso.service";
 import { Notify } from "notiflix/build/notiflix-notify-aio";
 import { Report } from "notiflix/build/notiflix-report-aio";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { Alumno, Curso, MontoConcepto, Persona, PersonaAlumno } from "app/models/models";
+import {
+  Alumno,
+  Curso,
+  MontoConcepto,
+  Persona,
+  PersonaAlumno,
+} from "app/models/models";
 import { MontoConceptoService } from "app/service/monto_concepto.service";
 @Component({
   selector: "app-user-profile",
@@ -69,7 +75,7 @@ export class UserProfileComponent implements OnInit {
     });
 
     if (this.personaEdit !== undefined || this.alumnoEdit !== undefined) {
-      console.log(this.formularioRegistro)
+      console.log(this.formularioRegistro);
       //es para modificar
       console.log("holaaa", this.alumnoEdit);
       this.formularioRegistro.patchValue({
@@ -78,43 +84,45 @@ export class UserProfileComponent implements OnInit {
         nombre: this.personaEdit.nombre,
         cantidadMaterias: this.alumnoEdit.cantidad_materias,
         cantidadCuotas: this.alumnoEdit.cantidad_cuotas,
+        vestuario: this.alumnoEdit.vestuario,
+        entrada: this.alumnoEdit.entrada,
         // curso: this.alumnoEdit.sa_curso.id
       });
       this.seleccionada = this.alumnoEdit.id_curso;
-        console.log("el seleccionado es", this.seleccionada);
-        
-      this.montoConceptoService.get(this.alumnoEdit.sa_curso.cuota).subscribe((res)=>{
-        let descuento = this.alumnoEdit.descuento;
-        let cuotaCurso= res;
+      console.log("el seleccionado es", this.seleccionada);
 
-        console.log('cuota curso', cuotaCurso)
-        console.log('descuento', descuento)
-  
-        if ((cuotaCurso.monto/2) == (cuotaCurso.monto-descuento)) {
-          this.becado = true;
-        } else if (descuento === 0) {
-          this.noBecaNoDescuento = true;
-        } else if (descuento > 0) {
-          this.conDescuento = true;
-          this.formularioRegistro.patchValue({
-            cantidadDescuento: this.alumnoEdit.descuento
-          })
-          this.beneficiario = true;
-        }
-  
-        this.cursoService.get(this.alumnoEdit.id_curso).subscribe((curso) => {
-  
-          this.formularioRegistro.patchValue({
-            curso: curso,
-          });
-          console.log(
-            "seteamos el curso "
-          );
+      this.montoConceptoService
+        .get(this.alumnoEdit.sa_curso.cuota)
+        .subscribe((res) => {
+          let descuento = this.alumnoEdit.descuento;
+          let cuotaCurso = res;
+
+          console.log("cuota curso", cuotaCurso);
+          console.log("descuento", descuento);
+
+          if (cuotaCurso.monto / 2 == cuotaCurso.monto - descuento) {
+            this.becado = true;
+          } else if (descuento === 0) {
+            this.noBecaNoDescuento = true;
+          } else if (descuento > 0) {
+            this.conDescuento = true;
+            this.formularioRegistro.patchValue({
+              cantidadDescuento: this.alumnoEdit.descuento,
+            });
+            this.beneficiario = true;
+          }
+
+          // this.cursoService.get(this.alumnoEdit.id_curso).subscribe((curso) => {
+
+          //   this.formularioRegistro.patchValue({
+          //     curso: curso,
+          //   });
+          //   console.log(
+          //     "seteamos el curso "
+          //   );
+          // });
         });
-      
-      
-      });
-      
+
       // if (this.alumnoEdit.descuento > 0) {
       //   this.montoConceptoService.get(this.alumnoEdit.id_curso).subscribe(concepto => {
       //     let cuotaCurso = concepto.monto;
@@ -131,7 +139,49 @@ export class UserProfileComponent implements OnInit {
 
   guardarAlumno() {
     // console.log(this.beneficiario);
-    if (this.formIsValid()) {
+    if (this.personaEdit !== undefined || this.alumnoEdit !== undefined) {
+      this.personaService
+        .update(this.personaEdit.id, {
+          nombre: this.formularioRegistro.value.nombre,
+          apellido: this.formularioRegistro.value.apellido,
+          documento: this.formularioRegistro.value.cedula,
+        })
+        .subscribe((data) => {
+          let descuento = 0;
+          let idCuota = this.formularioRegistro.value.curso;
+          this.montoConceptoService.get(idCuota).subscribe((res) => {
+            console.log("beca", res);
+            if (this.beca) {
+              descuento = res.monto - res.monto * 0.5;
+            } else if (this.beneficiario) {
+              descuento = this.formularioRegistro.value.cantidadDescuento;
+            }
+            this.alumnoService
+              .update(this.alumnoEdit.id, {
+                cantidad_materias:
+                  this.formularioRegistro.value.cantidadMaterias,
+                // derecho_examen: this.formularioRegistro.value.derechoExamen,
+                vestuario:
+                  this.formularioRegistro.value.vestuario > 0
+                    ? this.formularioRegistro.value.vestuario
+                    : 0,
+                id_curso: this.formularioRegistro.value.curso,
+                entrada:
+                  this.formularioRegistro.value.entrada > 0
+                    ? this.formularioRegistro.value.entrada
+                    : 0,
+                descuento: descuento,
+                cantidad_cuotas: this.formularioRegistro.value.cantidadCuotas,
+                id_persona: data.id,
+              })
+              .subscribe((response) => {
+                console.log(response);
+                Notify.success("Actualizacion exitoso");
+                this.formularioRegistro.reset();
+              });
+          });
+        });
+    } else if (this.formIsValid()) {
       this.personaService
         .checkPersona(this.formularioRegistro.value.cedula)
         .subscribe((response) => {
@@ -150,7 +200,7 @@ export class UserProfileComponent implements OnInit {
               })
               .subscribe((data) => {
                 let descuento = 0;
-                let idCuota = this.formularioRegistro.value.curso.cuota;
+                let idCuota = this.formularioRegistro.value.curso;
                 this.montoConceptoService.get(idCuota).subscribe((res) => {
                   console.log("beca", res);
                   if (this.beca) {
@@ -163,12 +213,12 @@ export class UserProfileComponent implements OnInit {
                       cantidad_materias:
                         this.formularioRegistro.value.cantidadMaterias,
                       // derecho_examen: this.formularioRegistro.value.derechoExamen,
-                      vestuario: 0,
-                      id_curso: this.formularioRegistro.value.curso.id,
-                      entrada: 0,
+                      vestuario:0,
+                      id_curso: this.formularioRegistro.value.curso,
+                      entrada:0,
                       descuento: descuento,
                       cantidad_cuotas:
-                        this.formularioRegistro.value.cantidadcuotas,
+                        this.formularioRegistro.value.cantidadCuotas,
                       id_persona: data.id,
                     })
                     .subscribe((response) => {
