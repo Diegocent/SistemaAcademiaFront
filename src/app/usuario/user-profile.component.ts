@@ -5,7 +5,7 @@ import { CursoService } from "app/service/curso.service";
 import { Notify } from "notiflix/build/notiflix-notify-aio";
 import { Report } from "notiflix/build/notiflix-report-aio";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { Alumno, Curso, Persona, PersonaAlumno } from "app/models/models";
+import { Alumno, Curso, MontoConcepto, Persona, PersonaAlumno } from "app/models/models";
 import { MontoConceptoService } from "app/service/monto_concepto.service";
 @Component({
   selector: "app-user-profile",
@@ -16,7 +16,7 @@ export class UserProfileComponent implements OnInit {
   @Input() edit;
   @Input() personaEdit: Persona;
   @Input() alumnoEdit: Alumno;
-
+  seleccionada: number = 1;
   beneficiario: boolean = false;
   beca: boolean = false;
   noBecaNoDescuento: boolean = false;
@@ -80,31 +80,41 @@ export class UserProfileComponent implements OnInit {
         cantidadCuotas: this.alumnoEdit.cantidad_cuotas,
         // curso: this.alumnoEdit.sa_curso.id
       });
+      this.seleccionada = this.alumnoEdit.id_curso;
+        console.log("el seleccionado es", this.seleccionada);
+        
+      this.montoConceptoService.get(this.alumnoEdit.sa_curso.cuota).subscribe((res)=>{
+        let descuento = this.alumnoEdit.descuento;
+        let cuotaCurso= res;
 
-      let cuotaCurso = this.alumnoEdit.sa_curso.cuota;
-      let descuento = this.alumnoEdit.descuento;
-
-      console.log('cuota curso', cuotaCurso)
-      console.log('descuento', descuento)
-
-      if (cuotaCurso == (cuotaCurso/descuento)) {
-        this.becado = true;
-      } else if (descuento === 0) {
-        this.noBecaNoDescuento = true;
-      } else if (descuento > 0) {
-        this.conDescuento = true;
-        this.formularioRegistro.patchValue({
-          cantidadDescuento: this.alumnoEdit.descuento
-        })
-        this.beneficiario = true;
-      }
-
-      this.cursoService.get(this.alumnoEdit.id_curso).subscribe((curso) => {
-        this.formularioRegistro.patchValue({
-          curso: curso,
+        console.log('cuota curso', cuotaCurso)
+        console.log('descuento', descuento)
+  
+        if ((cuotaCurso.monto/2) == (cuotaCurso.monto-descuento)) {
+          this.becado = true;
+        } else if (descuento === 0) {
+          this.noBecaNoDescuento = true;
+        } else if (descuento > 0) {
+          this.conDescuento = true;
+          this.formularioRegistro.patchValue({
+            cantidadDescuento: this.alumnoEdit.descuento
+          })
+          this.beneficiario = true;
+        }
+  
+        this.cursoService.get(this.alumnoEdit.id_curso).subscribe((curso) => {
+  
+          this.formularioRegistro.patchValue({
+            curso: curso,
+          });
+          console.log(
+            "seteamos el curso "
+          );
         });
-        console.log("seteamos el curso");
+      
+      
       });
+      
       // if (this.alumnoEdit.descuento > 0) {
       //   this.montoConceptoService.get(this.alumnoEdit.id_curso).subscribe(concepto => {
       //     let cuotaCurso = concepto.monto;
@@ -142,7 +152,7 @@ export class UserProfileComponent implements OnInit {
                 let descuento = 0;
                 let idCuota = this.formularioRegistro.value.curso.cuota;
                 this.montoConceptoService.get(idCuota).subscribe((res) => {
-                  console.log("beca", this.beca);
+                  console.log("beca", res);
                   if (this.beca) {
                     descuento = res.monto - res.monto * 0.5;
                   } else if (this.beneficiario) {
@@ -177,42 +187,42 @@ export class UserProfileComponent implements OnInit {
 
   formIsValid(): boolean {
     let validForm = true;
-    if (
-      this.formularioRegistro.value.cedula === "" ||
-      this.formularioRegistro.value.cedula == null
-    ) {
-      validForm = false;
-    } else if (
-      this.formularioRegistro.value.nombre === "" ||
-      this.formularioRegistro.value.nombre == null
-    ) {
-      validForm = false;
-    } else if (
-      this.formularioRegistro.value.apellido === "" ||
-      this.formularioRegistro.value.apellido == null
-    ) {
-      validForm = false;
-    } else if (
-      this.formularioRegistro.value.cantidadMaterias === "" ||
-      this.formularioRegistro.value.cantidadMaterias == null
-    ) {
-      validForm = false;
-    } else if (
-      this.formularioRegistro.value.curso === "" ||
-      this.formularioRegistro.value.curso == null
-    ) {
-      validForm = false;
-    } else if (
-      this.formularioRegistro.value.cantidadcuotas === "" ||
-      this.formularioRegistro.value.cantidadcuotas == null
-    ) {
-      validForm = false;
-    } else if (
-      this.beneficiario &&
-      this.formularioRegistro.value.cantidadDescuento === ""
-    ) {
-      validForm = false;
-    }
+    // if (
+    //   this.formularioRegistro.value.cedula === "" ||
+    //   this.formularioRegistro.value.cedula == null
+    // ) {
+    //   validForm = false;
+    // } else if (
+    //   this.formularioRegistro.value.nombre === "" ||
+    //   this.formularioRegistro.value.nombre == null
+    // ) {
+    //   validForm = false;
+    // } else if (
+    //   this.formularioRegistro.value.apellido === "" ||
+    //   this.formularioRegistro.value.apellido == null
+    // ) {
+    //   validForm = false;
+    // } else if (
+    //   this.formularioRegistro.value.cantidadMaterias === "" ||
+    //   this.formularioRegistro.value.cantidadMaterias == null
+    // ) {
+    //   validForm = false;
+    // } else if (
+    //   this.formularioRegistro.value.curso === "" ||
+    //   this.formularioRegistro.value.curso == null
+    // ) {
+    //   validForm = false;
+    // } else if (
+    //   this.formularioRegistro.value.cantidadcuotas === "" ||
+    //   this.formularioRegistro.value.cantidadcuotas == null
+    // ) {
+    //   validForm = false;
+    // } else if (
+    //   this.beneficiario &&
+    //   this.formularioRegistro.value.cantidadDescuento === ""
+    // ) {
+    //   validForm = false;
+    // }
 
     return validForm;
   }
