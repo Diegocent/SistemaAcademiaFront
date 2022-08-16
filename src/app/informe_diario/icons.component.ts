@@ -49,14 +49,17 @@ export class IconsComponent {
                     fecha: aux,
                   },
                 ];
-                var ordenado = this.dataSource.sort(function(a, b) {var firstDate = new Date(a.fecha),
-                  SecondDate = new Date(b.fecha);
-                  
-                if (firstDate < SecondDate) return -1;
-                if (firstDate > SecondDate) return 1;
-                return 0;
+                this.dataSource.sort(function (a, b) {
+                  // A va primero que B
+                  if (a.id < b.id)
+                      return -1;
+                  // B va primero que A
+                  else if (a.id > b.id)
+                      return 1;
+                  // A y B son iguales
+                  else 
+                      return 0;
               });
-                console.log(ordenado);
               }
             });
           });
