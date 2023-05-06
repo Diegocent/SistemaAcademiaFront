@@ -34,16 +34,17 @@ export class TableListComponent implements OnInit {
     this.personaService.getAll()
     .subscribe(res => {
       this.personas = res;
+      console.log(res);
       this.alumnoService.getAll()
       .subscribe(res => {
         this.alumnos = res;
-        console.log(this.alumnos)
+        console.log(res);
         for(let i = 0; i < this.alumnos.length; i++){
           console.log("alumno", this.alumnos[i])
           this.montoConceptoService.get(this.alumnos[i].sa_curso.cuota).subscribe(ans => {
             let cuota = ans;
-            this.montoConceptoService.get(this.alumnos[i].sa_curso.examen).subscribe(ans => {
-              let examen = ans;
+            this.montoConceptoService.get(this.alumnos[i].sa_curso.examen).subscribe(re => {
+              let examen = re;
               let temp = {
                 persona: this.personas[i],
                 alumno: this.alumnos[i],

@@ -11,6 +11,8 @@ import { IconsComponent } from '../../informe_diario/icons.component';
 import { MapsComponent } from '../../informe_fechas/maps.component';
 import { NotificationsComponent } from '../../configuracion/notifications.component';
 import { UpgradeComponent } from '../../upgrade/upgrade.component';
+import { PdfComponent } from '../../pdf/pdf.component';
+// aqui todos los controles de angular material
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
@@ -22,7 +24,8 @@ import {MatTableModule} from '@angular/material/table';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {MatRadioModule} from '@angular/material/radio';
-import { PdfComponent } from '../../pdf/pdf.component';
+import {MatPaginatorModule} from '@angular/material/paginator';
+
 
 
 @NgModule({
@@ -41,7 +44,8 @@ import { PdfComponent } from '../../pdf/pdf.component';
     MatDatepickerModule,
     MatNativeDateModule,
     MatCheckboxModule,
-    MatRadioModule
+    MatRadioModule,
+    MatPaginatorModule
   ],
   declarations: [
     DashboardComponent,
