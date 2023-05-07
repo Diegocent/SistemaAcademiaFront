@@ -32,42 +32,69 @@
                             </div>
                               <div class="row">
                                 <div class="container" id="tabla">
-                                <table *ngIf="viewDatasource" mat-table [dataSource]="dataSource" class="mat-elevation-z8" id="tabla">
-                    
-                                    <!-- Position Column -->
-                                    <ng-container matColumnDef="cedula">
-                                      <th mat-header-cell *matHeaderCellDef>Cedula</th>
-                                      <td mat-cell *matCellDef="let element"> {{element.datosAlumno.sa_persona.documento}} </td>
-                                    </ng-container>
-                                  
-                                    <!-- Name Column -->
-                                    <ng-container matColumnDef="nombre">
-                                      <th mat-header-cell *matHeaderCellDef>Nombre</th>
-                                      <td mat-cell *matCellDef="let element"> {{element.datosAlumno.sa_persona.nombre}} {{element.datosAlumno.sa_persona.apellido}} </td>
-                                    </ng-container>
-
-                                    <!-- Weight Column -->
-                                    <ng-container matColumnDef="curso">
-                                      <th mat-header-cell *matHeaderCellDef>Curso</th>
-                                      <td mat-cell *matCellDef="let element"> {{element.datosAlumno.sa_curso.nombre}} </td>
-                                    </ng-container>
-                                  
-                                    <!-- Weight Column -->
-                                    <ng-container matColumnDef="concepto">
-                                      <th mat-header-cell *matHeaderCellDef>Concepto</th>
-                                      <td mat-cell *matCellDef="let element"> {{element.concepto.concepto}} </td>
-                                    </ng-container>
-                                  
-                                    <!-- Symbol Column -->
-                                    <ng-container matColumnDef="importe">
-                                      <th mat-header-cell *matHeaderCellDef>Importe</th>
-                                      <td mat-cell *matCellDef="let element"> {{element.concepto.monto}} Gs.</td>
-                                    </ng-container>
+                                  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 table table-hover demo-table"
+                                  id="tabla"
+                                >
+                                  <!--- Note that these columns can be defined in any order.
+                                                        The actual rendered columns are set as a property on the row definition" -->
+              
+                                  <!-- Position Column -->
+                                  <ng-container matColumnDef="cedula">
+                                    <th mat-header-cell *matHeaderCellDef>Cedula</th>
+                                    <td mat-cell *matCellDef="let element">
+                                      {{ element.datosAlumno.sa_persona.documento }}
+                                    </td>
+                                  </ng-container>
+              
+                                  <!-- Name Column -->
+                                  <ng-container matColumnDef="nombre">
+                                    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                                    <td mat-cell *matCellDef="let element">
+                                      {{ element.datosAlumno.sa_persona.nombre }}
+                                      {{ element.datosAlumno.sa_persona.apellido }}
+                                    </td>
+                                  </ng-container>
+              
+                                  <!-- Weight Column -->
+                                  <ng-container matColumnDef="curso">
+                                    <th mat-header-cell *matHeaderCellDef>Curso</th>
+                                    <td mat-cell *matCellDef="let element">
+                                      {{ element.datosAlumno.sa_curso.nombre }}
+                                    </td>
+                                  </ng-container>
+              
+                                  <!-- Weight Column -->
+                                  <ng-container matColumnDef="concepto">
+                                    <th mat-header-cell *matHeaderCellDef>Concepto</th>
+                                    <td mat-cell *matCellDef="let element">
+                                      {{ element.concepto.concepto }}
+                                    </td>
+                                  </ng-container>
+              
+                                  <!-- Symbol Column -->
+                                  <ng-container matColumnDef="importe">
+                                    <th mat-header-cell *matHeaderCellDef>Importe</th>
+                                    <td mat-cell *matCellDef="let element">
+                                      {{ element.concepto.monto }} Gs.
+                                    </td>
+                                  </ng-container>
+                                  <ng-container matColumnDef="fecha">
+                                    <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                                    <td mat-cell *matCellDef="let element">
+                                      {{ element.fecha }}
+                                    </td>
+                                  </ng-container>
                                   
                                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                                  </table>
+                                </table>
+                                <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Selecciona la pagina de los productos">  </mat-paginator>
                                 </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                <input type="text" [value]="totalImportes | number:'1.2-2'" disabled>
+                              </div>
                             </div>
                                 <button mat-raised-button type="submit" class="btn btn-danger pull-right" (click)="filtrarPagos()">Buscar</button>
                                 <div class="clearfix"></div>

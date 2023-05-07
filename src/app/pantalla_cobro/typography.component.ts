@@ -279,6 +279,8 @@ export class TypographyComponent {
           }
           this.formularioCobro.patchValue({ importe: this.importe });
         });
+    } else if(this.tipoPago=="Matricula"){
+      this.formularioCobro.controls["importe"].enable();
     }
   }
 

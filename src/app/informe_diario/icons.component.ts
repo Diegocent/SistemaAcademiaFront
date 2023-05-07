@@ -5,6 +5,9 @@ import { PagosService } from "app/service/pagos.service";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+
+import { DecimalPipe } from '@angular/common'; 
 
 declare interface Curso{
   id: number;
@@ -64,6 +67,7 @@ declare interface Tabla{
   selector: "app-icons",
   templateUrl: "./icons.component.html",
   styleUrls: ["./icons.component.css"],
+  providers:[DecimalPipe]
 })
 export class IconsComponent implements OnInit {
   displayedColumns: string[] = [
@@ -79,6 +83,9 @@ export class IconsComponent implements OnInit {
   dataSource: any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   temp:any=[];
+  totalImportes:number=0;
+
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private pagoService: PagosService,
@@ -117,7 +124,11 @@ export class IconsComponent implements OnInit {
                   },
                 ];
               // console.log(this.temp);
+              this.totalImportes += concepto.monto;
               }
+            });
+            this.temp.sort((a, b) => {
+              return new Date(b.fecha).getTime() - new Date(a.fecha).getTime();
             });
             this.dataSource = new MatTableDataSource<Tabla>(this.temp);
             this.dataSource.paginator = this.paginator;
