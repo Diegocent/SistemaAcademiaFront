@@ -1,10 +1,15 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output ,ViewChild} from '@angular/core';
 import { Report } from 'notiflix/build/notiflix-report-aio';
 import { Confirm } from 'notiflix/build/notiflix-confirm-aio';
 import { Alumno, Persona, PersonaAlumno } from 'app/models/models';
 import { AlumnoService } from 'app/service/alumno.service';
 import { PersonaService } from 'app/service/persona.service';
 import { MontoConceptoService } from 'app/service/monto_concepto.service';
+
+import {MatPaginator} from '@angular/material/paginator';
+import {MatTableDataSource} from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+
 @Component({
   selector: 'app-table-list',
   templateUrl: './table-list.component.html',
@@ -12,7 +17,7 @@ import { MontoConceptoService } from 'app/service/monto_concepto.service';
 })
 export class TableListComponent implements OnInit {
   // @Output() eventopersona =new EventEmitter<Alumno>;
-
+  
   personas: Persona[] = [];
   alumnos: Alumno[] = [];
   // personaAlumno: PersonaAlumno[] = [];
@@ -21,8 +26,9 @@ export class TableListComponent implements OnInit {
   //PARA ENVIAR A MODIFICAR
   personaModificar: Persona;
   alumnoModificar: Alumno;
-
-  dataSource: PersonaAlumno[] = []
+  dataSource: any;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  auxiliar:any=[];
   displayedColumns: string[] = ['cedula', 'nombre', 'curso', 'vestuario', 'entrada', 'cantidad_materias', 'derecho_examen', 'cuota', 'accion'];
 
   constructor(
@@ -31,6 +37,10 @@ export class TableListComponent implements OnInit {
     private montoConceptoService: MontoConceptoService) { }
 
   ngOnInit() {
+    this.actualizar();
+  }
+
+  actualizar(){
     this.personaService.getAll()
     .subscribe(res => {
       this.personas = res;
@@ -52,14 +62,17 @@ export class TableListComponent implements OnInit {
                 examen: examen,
                 curso: this.alumnos[i].sa_curso.nombre
               }
-            console.log(temp)
-            this.dataSource = [...this.dataSource, temp]
-            console.log(this.dataSource)
+            console.log(temp);
+            this.auxiliar = [...this.auxiliar, temp]
+            this.auxiliar.sort((a, b) => a.persona.nombre.localeCompare(b.persona.nombre));
+            this.dataSource = new MatTableDataSource<PersonaAlumno>(this.auxiliar);
+            this.dataSource.paginator = this.paginator;
+            console.log(this.dataSource);
             })
-          })
+          });
         }
-      })
-    })
+      });
+    });
   }
 
   eliminarAlumno(data, index) {
@@ -73,12 +86,14 @@ export class TableListComponent implements OnInit {
           .subscribe(response => {
             this.alumnoService.delete(data.alumno.id).subscribe(res => {
               console.log(response);
-              let q = [];
-              this.dataSource.forEach((e, i) => {
-                if(i != index)
-                  q = [...q, e]
-              })
-              this.dataSource = q;
+              this.auxiliar=[];
+              this.actualizar();
+              // let q = [];
+              // this.dataSource.forEach((e, i) => {
+              //   if(i != index)
+              //     q = [...q, e]
+              // })
+              // this.dataSource = q;
               Report.success(
                 'Éxito',
                 'Se eliminó al alumno/a exitosamente',

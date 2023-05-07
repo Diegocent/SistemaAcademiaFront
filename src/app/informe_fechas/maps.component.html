@@ -93,7 +93,8 @@
                             </div>
                             <div class="row">
                               <div class="col-md-6">
-                                <input type="text" [value]="totalImportes | number:'1.2-2'" disabled>
+                                <label for="myInput">Total:</label>
+                                <input type="text"  id="myInput" name="myInput" [value]="totalImportes | number:'1.2-2'" disabled>
                               </div>
                             </div>
                                 <button mat-raised-button type="submit" class="btn btn-danger pull-right" (click)="filtrarPagos()">Buscar</button>

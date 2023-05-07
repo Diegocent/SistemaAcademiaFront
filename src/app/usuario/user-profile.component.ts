@@ -71,6 +71,7 @@ export class UserProfileComponent implements OnInit {
 
   ngOnInit() {
     this.cursoService.getAll().subscribe((result) => {
+      result.sort((a, b) => a.id - b.id);
       this.cursos = result;
     });
 
