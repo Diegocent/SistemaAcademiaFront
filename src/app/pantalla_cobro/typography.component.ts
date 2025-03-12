@@ -231,7 +231,8 @@ export class TypographyComponent {
         if (alumno.sa_persona.id === this.persona.id) {
           this.alumno = alumno;
           this.cuotaActual = 10 - alumno.cantidad_cuotas;
-          console.log("la cantidad de cuotas para este es: ",this.cuotaActual)
+          console.log(this.alumno);
+          console.log("la cantidad de cuotas para este es: ",this.cuotaActual);
         }
       });
       this.formularioCobro.patchValue({ importe: "" });
@@ -255,7 +256,7 @@ export class TypographyComponent {
         .get(this.alumno.sa_curso.cuota)
         .subscribe((res) => {
           console.log("res", res);
-          this.importe = res.monto;
+          this.importe = res.monto-this.alumno.descuento;
           this.formularioCobro.patchValue({
             importe: this.importe * this.formularioCobro.value.cantidadCuota,
           });
