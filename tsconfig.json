@@ -1,8 +1,9 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "strictPropertyInitialization":false,
+    "strictPropertyInitialization": false,
     "outDir": "./dist/out-tsc",
+    "esModuleInterop": true,
     "baseUrl": "src",
     "sourceMap": true,
     "strict": false,
@@ -12,12 +13,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es5",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2017",
-      "dom"
-    ]
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2017", "dom"]
   }
 }

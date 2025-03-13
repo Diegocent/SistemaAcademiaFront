@@ -5,15 +5,19 @@ import { Conceptos } from "app/config/app-settings";
 import { AlumnoService } from "app/service/alumno.service";
 import { Alumno, Persona } from "app/models/models";
 import { MontoConceptoService } from "app/service/monto_concepto.service";
-import { Notify } from "notiflix/build/notiflix-notify-aio";
+// import { Notify } from "notiflix/build/notiflix-notify-aio";
 import { PagosService } from "app/service/pagos.service";
-import { element } from "protractor";
 import { ConceptoPagoService } from "app/service/concepto_pago.service";
 import { Report } from "notiflix";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
-import * as moment from "moment";
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import moment from "moment";
+import * as pdfMake from "pdfmake/build/pdfmake";
+import { TDocumentDefinitions } from "pdfmake/interfaces";
+
+// Cargar vfs_fonts usando require (ignorar tipos)
+import { vfs } from "pdfmake/build/vfs_fonts";
+
+// Asignar las fuentes a pdfMake
+(pdfMake as any).vfs = vfs;
 
 @Component({
   selector: "app-typography",
@@ -81,13 +85,13 @@ export class TypographyComponent {
       this.listaPagos.forEach((element) => {
         monto += element.importe;
         if (element.concepto == "vestuario") {
-          vest= 1;
+          vest = 1;
         }
         if (element.concepto == "entrada") {
-          entr= 1;
+          entr = 1;
         }
       });
-      if (this.formularioCobro.value.cantidadCuota > 0) {
+      if (Number(this.formularioCobro.value.cantidadCuota) > 0) {
         restante = 10 - this.cuotaActual;
         this.alumnoService
           .update(this.alumno.id, { cantidad_cuotas: restante })
@@ -98,22 +102,18 @@ export class TypographyComponent {
             );
           });
       }
-      if(vest == 1){
+      if (vest == 1) {
         this.alumnoService
           .update(this.alumno.id, { vestuario: 0 })
           .subscribe((consulta) => {
-            console.log(
-              "actualizacion exitoza y el vestuario se cero "
-            );
+            console.log("actualizacion exitoza y el vestuario se cero ");
           });
       }
-      if(entr == 1){
+      if (entr == 1) {
         this.alumnoService
           .update(this.alumno.id, { entrada: 0 })
           .subscribe((consulta) => {
-            console.log(
-              "actualizacion exitoza y la entrada se cero "
-            );
+            console.log("actualizacion exitoza y la entrada se cero ");
           });
       }
       return monto;
@@ -165,13 +165,17 @@ export class TypographyComponent {
 
   guardarPago() {
     if (this.checkFormulario() === false) {
-      Notify.warning("Se deben completar todos los campos.");
+      // Notify.warning("Se deben completar todos los campos.");
     } else {
       if (this.cuotaActual + 1 > 10) {
-        Notify.info("Ya no quedan cuotas por pagar.");
+        // Notify.info("Ya no quedan cuotas por pagar.");
       } else {
-        if (this.formularioCobro.value.cantidadCuota > 1) {
-          for (let i = 0; i < this.formularioCobro.value.cantidadCuota; i++) {
+        if (Number(this.formularioCobro.value.cantidadCuota) > 1) {
+          for (
+            let i = 0;
+            i < Number(this.formularioCobro.value.cantidadCuota);
+            i++
+          ) {
             this.listaPagos = [
               ...this.listaPagos,
               {
@@ -182,7 +186,7 @@ export class TypographyComponent {
                       " " + ++this.cuotaActual
                     : ""),
                 importe:
-                  this.formularioCobro.controls["importe"].value /
+                  Number(this.formularioCobro.controls["importe"].value) /
                   this.cantidadCuota,
               },
             ];
@@ -232,7 +236,7 @@ export class TypographyComponent {
           this.alumno = alumno;
           this.cuotaActual = 10 - alumno.cantidad_cuotas;
           console.log(this.alumno);
-          console.log("la cantidad de cuotas para este es: ",this.cuotaActual);
+          console.log("la cantidad de cuotas para este es: ", this.cuotaActual);
         }
       });
       this.formularioCobro.patchValue({ importe: "" });
@@ -242,7 +246,7 @@ export class TypographyComponent {
   cantidadCuotaChange(event) {
     this.cantidadCuota = event.target.value;
     this.formularioCobro.patchValue({
-      importe: this.importe * event.target.value,
+      importe: (this.importe * event.target.value).toString(),
     });
   }
 
@@ -256,15 +260,21 @@ export class TypographyComponent {
         .get(this.alumno.sa_curso.cuota)
         .subscribe((res) => {
           console.log("res", res);
-          this.importe = res.monto-this.alumno.descuento;
+          this.importe = res.monto - this.alumno.descuento;
           this.formularioCobro.patchValue({
-            importe: this.importe * this.formularioCobro.value.cantidadCuota,
+            importe: (
+              this.importe * Number(this.formularioCobro.value.cantidadCuota)
+            ).toString(),
           });
         });
     } else if (this.tipoPago == "Vestuario") {
-      this.formularioCobro.patchValue({ importe: this.alumno.vestuario });
+      this.formularioCobro.patchValue({
+        importe: this.alumno.vestuario.toString(),
+      });
     } else if (this.tipoPago == "Entrada") {
-      this.formularioCobro.patchValue({ importe: this.alumno.entrada });
+      this.formularioCobro.patchValue({
+        importe: this.alumno.entrada.toString(),
+      });
     } else if (this.tipoPago == "Derecho a examen") {
       this.montoConceptoService
         .get(this.alumno.sa_curso.examen)
@@ -278,9 +288,9 @@ export class TypographyComponent {
           } else {
             this.importe = res.monto * this.alumno.cantidad_materias;
           }
-          this.formularioCobro.patchValue({ importe: this.importe });
+          this.formularioCobro.patchValue({ importe: this.importe.toString() });
         });
-    } else if(this.tipoPago=="Matricula"){
+    } else if (this.tipoPago == "Matricula") {
       this.formularioCobro.controls["importe"].enable();
     }
   }
@@ -298,29 +308,21 @@ export class TypographyComponent {
     listaPagos.forEach((element) => {
       monto += element.importe;
     });
-    console.log(monto);
-    console.log(listaPagos.length);
 
     if (listaPagos.length < 5) {
-      let i = 0;
-      for (i; i < 5; i++) {
-        if (i < listaPagos.length) {
-          vector[i] = listaPagos[i];
-        } else {
-          vector[i] = {
-            concepto: "      ",
-            importe: "       ",
-          };
-        }
+      for (let i = 0; i < 5; i++) {
+        vector[i] =
+          i < listaPagos.length
+            ? listaPagos[i]
+            : { concepto: "      ", importe: "       " };
       }
     } else {
-      let i = 0;
-      for (i; i < 5; i++) {
+      for (let i = 0; i < 5; i++) {
         vector[i] = listaPagos[i];
       }
     }
-    console.log(vector);
-    var dd = {
+
+    const dd: TDocumentDefinitions = {
       content: [
         { text: "Recibo", style: "header" },
         {
@@ -328,8 +330,6 @@ export class TypographyComponent {
           color: "#444",
           table: {
             widths: [200, 50, 75, 75],
-            // heights: [20, 'auto', 'auto'],
-            // keepWithHeaderRows: 1,
             body: [
               [
                 {
@@ -349,14 +349,12 @@ export class TypographyComponent {
                 },
                 "",
               ],
-              // [{text: 'Header with Colspan = 2', style: 'tableHeader', colSpan: 2, alignment: 'center'}, {}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
-              // [{text: 'Header 1', style: 'tableHeader', alignment: 'center'}, {text: 'Header 2', style: 'tableHeader', alignment: 'center'}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
-              ["", "", { colSpan: 2, text: "Gs.:" + monto, fontSize: 12 }, ""],
+              ["", "", { colSpan: 2, text: `Gs.: ${monto}`, fontSize: 12 }, ""],
               ["", "", { colSpan: 2, text: "N°.:", fontSize: 12 }, ""],
               [
                 {
                   colSpan: 4,
-                  text: "Fecha de emision " + moment(d).format("D MMMM YYYY"),
+                  text: `Fecha de emisión ${moment(d).format("D MMMM YYYY")}`,
                   fontSize: 10,
                   border: [true, false, true, false],
                 },
@@ -367,7 +365,7 @@ export class TypographyComponent {
               [
                 {
                   colSpan: 4,
-                  text: "Recibimos a Favor de " + nombre,
+                  text: `Recibimos a Favor de ${nombre}`,
                   fontSize: 10,
                   border: [true, false, true, false],
                 },
@@ -378,7 +376,7 @@ export class TypographyComponent {
               [
                 {
                   colSpan: 4,
-                  text: "Con C.I. N.: " + documento,
+                  text: `Con C.I. N.: ${documento}`,
                   fontSize: 10,
                   border: [true, false, true, false],
                 },
@@ -389,7 +387,7 @@ export class TypographyComponent {
               [
                 { text: "Conceptos de pago" },
                 "Cantidad",
-                "Precio Unitaro",
+                "Precio Unitario",
                 "Precio Total",
               ],
               [vector[0].concepto, "", vector[0].importe, vector[0].importe],
@@ -410,8 +408,6 @@ export class TypographyComponent {
           color: "#444",
           table: {
             widths: [200, 50, 75, 75],
-            // heights: [20, 'auto', 'auto'],
-            // keepWithHeaderRows: 1,
             body: [
               [
                 {
@@ -431,14 +427,12 @@ export class TypographyComponent {
                 },
                 "",
               ],
-              // [{text: 'Header with Colspan = 2', style: 'tableHeader', colSpan: 2, alignment: 'center'}, {}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
-              // [{text: 'Header 1', style: 'tableHeader', alignment: 'center'}, {text: 'Header 2', style: 'tableHeader', alignment: 'center'}, {text: 'Header 3', style: 'tableHeader', alignment: 'center'}],
-              ["", "", { colSpan: 2, text: "Gs.:" + monto, fontSize: 12 }, ""],
+              ["", "", { colSpan: 2, text: `Gs.: ${monto}`, fontSize: 12 }, ""],
               ["", "", { colSpan: 2, text: "N°.:", fontSize: 12 }, ""],
               [
                 {
                   colSpan: 4,
-                  text: "Fecha de emision " + moment(d).format("D MMMM YYYY"),
+                  text: `Fecha de emisión ${moment(d).format("D MMMM YYYY")}`,
                   fontSize: 10,
                   border: [true, false, true, false],
                 },
@@ -449,7 +443,7 @@ export class TypographyComponent {
               [
                 {
                   colSpan: 4,
-                  text: "Recibimos a Favor de " + nombre,
+                  text: `Recibimos a Favor de ${nombre}`,
                   fontSize: 10,
                   border: [true, false, true, false],
                 },
@@ -460,7 +454,7 @@ export class TypographyComponent {
               [
                 {
                   colSpan: 4,
-                  text: "Con C.I. N.: " + documento,
+                  text: `Con C.I. N.: ${documento}`,
                   fontSize: 10,
                   border: [true, false, true, false],
                 },
@@ -471,7 +465,7 @@ export class TypographyComponent {
               [
                 { text: "Conceptos de pago" },
                 "Cantidad",
-                "Precio Unitaro",
+                "Precio Unitario",
                 "Precio Total",
               ],
               [vector[0].concepto, "", vector[0].importe, vector[0].importe],

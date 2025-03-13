@@ -34,7 +34,7 @@ export class UserProfileComponent implements OnInit {
     cedula: new FormControl(""),
     nombre: new FormControl(""),
     apellido: new FormControl(""),
-    vestuario: new FormControl(""),
+    vestuario: new FormControl(0),
     entrada: new FormControl(""),
     cantidadMaterias: new FormControl(""),
     derechoExamen: new FormControl(""),
@@ -58,8 +58,6 @@ export class UserProfileComponent implements OnInit {
       this.beca = false;
       this.beneficiario = false;
     }
-
-    console.log(this.formularioRegistro.value.opcionesDescuento);
   }
 
   constructor(
@@ -83,11 +81,10 @@ export class UserProfileComponent implements OnInit {
         cedula: this.personaEdit.documento,
         apellido: this.personaEdit.apellido,
         nombre: this.personaEdit.nombre,
-        cantidadMaterias: this.alumnoEdit.cantidad_materias,
-        cantidadCuotas: this.alumnoEdit.cantidad_cuotas,
+        cantidadMaterias: this.alumnoEdit.cantidad_materias.toString(),
+        cantidadCuotas: this.alumnoEdit.cantidad_cuotas.toString(),
         vestuario: this.alumnoEdit.vestuario,
-        entrada: this.alumnoEdit.entrada,
-        // curso: this.alumnoEdit.sa_curso.id
+        entrada: this.alumnoEdit.entrada.toString(),
       });
       this.seleccionada = this.alumnoEdit.id_curso;
       console.log("el seleccionado es", this.seleccionada);
@@ -108,31 +105,11 @@ export class UserProfileComponent implements OnInit {
           } else if (descuento > 0) {
             this.conDescuento = true;
             this.formularioRegistro.patchValue({
-              cantidadDescuento: this.alumnoEdit.descuento,
+              cantidadDescuento: this.alumnoEdit.descuento.toString(),
             });
             this.beneficiario = true;
           }
-
-          // this.cursoService.get(this.alumnoEdit.id_curso).subscribe((curso) => {
-
-          //   this.formularioRegistro.patchValue({
-          //     curso: curso,
-          //   });
-          //   console.log(
-          //     "seteamos el curso "
-          //   );
-          // });
         });
-
-      // if (this.alumnoEdit.descuento > 0) {
-      //   this.montoConceptoService.get(this.alumnoEdit.id_curso).subscribe(concepto => {
-      //     let cuotaCurso = concepto.monto;
-      //     if (this.alumnoEdit.descuento === (cuotaCurso/2)) {
-      //       let becaRadio = document.getElementById("beca");
-      //       becaRadio.checked = true;
-      //     }
-      //   })
-      // }
     }
     console.log(this.personaEdit);
     console.log(this.alumnoEdit);
@@ -155,7 +132,9 @@ export class UserProfileComponent implements OnInit {
             if (this.beca) {
               descuento = res.monto - res.monto * 0.5;
             } else if (this.beneficiario) {
-              descuento = this.formularioRegistro.value.cantidadDescuento;
+              descuento = parseFloat(
+                this.formularioRegistro.value.cantidadDescuento
+              );
             }
             this.alumnoService
               .update(this.alumnoEdit.id, {
@@ -163,12 +142,12 @@ export class UserProfileComponent implements OnInit {
                   this.formularioRegistro.value.cantidadMaterias,
                 // derecho_examen: this.formularioRegistro.value.derechoExamen,
                 vestuario:
-                  this.formularioRegistro.value.vestuario > 0
+                  +this.formularioRegistro.value.vestuario > 0
                     ? this.formularioRegistro.value.vestuario
                     : 0,
                 id_curso: this.formularioRegistro.value.curso,
                 entrada:
-                  this.formularioRegistro.value.entrada > 0
+                  +this.formularioRegistro.value.entrada > 0
                     ? this.formularioRegistro.value.entrada
                     : 0,
                 descuento: descuento,
@@ -177,7 +156,7 @@ export class UserProfileComponent implements OnInit {
               })
               .subscribe((response) => {
                 console.log(response);
-                Notify.success("Actualizacion exitoso");
+                // Notify.success("Actualizacion exitoso");
                 this.formularioRegistro.reset();
               });
           });
@@ -207,16 +186,18 @@ export class UserProfileComponent implements OnInit {
                   if (this.beca) {
                     descuento = res.monto - res.monto * 0.5;
                   } else if (this.beneficiario) {
-                    descuento = this.formularioRegistro.value.cantidadDescuento;
+                    descuento = parseFloat(
+                      this.formularioRegistro.value.cantidadDescuento
+                    );
                   }
                   this.alumnoService
                     .create({
                       cantidad_materias:
                         this.formularioRegistro.value.cantidadMaterias,
                       // derecho_examen: this.formularioRegistro.value.derechoExamen,
-                      vestuario:0,
+                      vestuario: 0,
                       id_curso: this.formularioRegistro.value.curso,
-                      entrada:0,
+                      entrada: 0,
                       descuento: descuento,
                       cantidad_cuotas:
                         this.formularioRegistro.value.cantidadCuotas,
@@ -224,7 +205,7 @@ export class UserProfileComponent implements OnInit {
                     })
                     .subscribe((response) => {
                       console.log(response);
-                      Notify.success("Registro exitoso");
+                      // Notify.success("Registro exitoso");
                       this.formularioRegistro.reset();
                     });
                 });
@@ -232,48 +213,49 @@ export class UserProfileComponent implements OnInit {
           }
         });
     } else {
-      Notify.failure("Favor completar todos los campos");
+      // Notify.failure("Favor completar todos los campos");
+      console.log("Favor completar todos los campos");
     }
   }
 
   formIsValid(): boolean {
     let validForm = true;
-    // if (
-    //   this.formularioRegistro.value.cedula === "" ||
-    //   this.formularioRegistro.value.cedula == null
-    // ) {
-    //   validForm = false;
-    // } else if (
-    //   this.formularioRegistro.value.nombre === "" ||
-    //   this.formularioRegistro.value.nombre == null
-    // ) {
-    //   validForm = false;
-    // } else if (
-    //   this.formularioRegistro.value.apellido === "" ||
-    //   this.formularioRegistro.value.apellido == null
-    // ) {
-    //   validForm = false;
-    // } else if (
-    //   this.formularioRegistro.value.cantidadMaterias === "" ||
-    //   this.formularioRegistro.value.cantidadMaterias == null
-    // ) {
-    //   validForm = false;
-    // } else if (
-    //   this.formularioRegistro.value.curso === "" ||
-    //   this.formularioRegistro.value.curso == null
-    // ) {
-    //   validForm = false;
-    // } else if (
-    //   this.formularioRegistro.value.cantidadcuotas === "" ||
-    //   this.formularioRegistro.value.cantidadcuotas == null
-    // ) {
-    //   validForm = false;
-    // } else if (
-    //   this.beneficiario &&
-    //   this.formularioRegistro.value.cantidadDescuento === ""
-    // ) {
-    //   validForm = false;
-    // }
+    if (
+      this.formularioRegistro.value.cedula === "" ||
+      this.formularioRegistro.value.cedula == null
+    ) {
+      validForm = false;
+    } else if (
+      this.formularioRegistro.value.nombre === "" ||
+      this.formularioRegistro.value.nombre == null
+    ) {
+      validForm = false;
+    } else if (
+      this.formularioRegistro.value.apellido === "" ||
+      this.formularioRegistro.value.apellido == null
+    ) {
+      validForm = false;
+    } else if (
+      this.formularioRegistro.value.cantidadMaterias === "" ||
+      this.formularioRegistro.value.cantidadMaterias == null
+    ) {
+      validForm = false;
+    } else if (
+      this.formularioRegistro.value.curso === "" ||
+      this.formularioRegistro.value.curso == null
+    ) {
+      validForm = false;
+    } else if (
+      this.formularioRegistro.value.cantidadCuotas === "" ||
+      this.formularioRegistro.value.cantidadCuotas
+    ) {
+      validForm = false;
+    } else if (
+      this.beneficiario &&
+      this.formularioRegistro.value.cantidadDescuento === ""
+    ) {
+      validForm = false;
+    }
 
     return validForm;
   }

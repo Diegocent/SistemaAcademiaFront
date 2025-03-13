@@ -4,8 +4,7 @@ import { Curso } from "app/models/models";
 import { ConceptoService } from "app/service/concepto.service";
 import { CursoService } from "app/service/curso.service";
 import { MontoConceptoService } from "app/service/monto_concepto.service";
-import { Notify } from "notiflix";
-import { Report } from "notiflix/build/notiflix-report-aio";
+// import { Notify } from "notiflix";
 declare var $: any;
 @Component({
   selector: "app-notifications",
@@ -45,7 +44,7 @@ export class NotificationsComponent implements OnInit {
 
   modificar() {
     if (this.formIsValid()) {
-      if (this.formulario.value.tipoPago == 1) {
+      if (+this.formulario.value.tipoPago == 1) {
         console.log(this.formulario.value.cursoSeleccionado);
         let data = {
           monto: this.formulario.value.monto,
@@ -53,7 +52,7 @@ export class NotificationsComponent implements OnInit {
         // this.
         console.log(this.formulario.value.monto);
         this.montoConceptoService
-          .update(this.formulario.value.cursoSeleccionado.cuota, data)
+          .update((this.formulario.value.cursoSeleccionado as any).cuota, data)
           .subscribe((res) => console.log(res));
       } else {
         console.log(this.formulario.value.cursoSeleccionado);
@@ -63,13 +62,14 @@ export class NotificationsComponent implements OnInit {
         // this.
         console.log(this.formulario.value.monto);
         this.montoConceptoService
-          .update(this.formulario.value.cursoSeleccionado.examen, data)
+          .update((this.formulario.value.cursoSeleccionado as any).examen, data)
           .subscribe((res) => console.log(res));
       }
       this.formulario.reset();
-      Notify.success("Actualizado con exito");
+      // Notify.success("Actualizado con exito");
     } else {
-      Notify.failure("Favor completar todos los campos");
+      // Notify.failure("Favor completar todos los campos");
+      console.log("Favor completar todos los campos");
     }
   }
   formIsValid(): boolean {

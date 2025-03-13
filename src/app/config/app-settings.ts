@@ -6,5 +6,5 @@ export enum Conceptos {
   MATRICULA = "Matricula",
 }
 
-export const URL = "http://localhost:8080"; //desarrollo
+export const URL = "http://localhost:3222"; //desarrollo
 // export const URL = 'https://app-sistemaacademia.herokuapp.com';  //produccion
