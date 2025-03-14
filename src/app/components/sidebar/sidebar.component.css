@@ -1,20 +1,18 @@
-#barra{
-background-color: #F3F4F7 !important;
-    }
-
-.logo{
-    width: auto !important;
-    padding: 10px !important;
-    display: block !important;
-    margin: 0 auto !important;
+#barra {
+  background-color: #f3f4f7;
 }
-/* .nav-link{
-    background-color: #8DB9CA !important;
-} */
-a:active {
-    background-color: #8DB9CA !important;
-  }
-  li:active {
-    background-color: #8DB9CA !important;
-  }
-/* 1248AB */
+
+.logo {
+  width: auto;
+  padding: 10px;
+  display: block;
+  margin: 0 auto;
+}
+
+.nav-item.active {
+  background-color: #8db9ca;
+}
+
+.nav-item.active .nav-link {
+  background-color: #8db9ca;
+}

@@ -8,7 +8,7 @@ import { MontoConceptoService } from "app/service/monto_concepto.service";
 // import { Notify } from "notiflix/build/notiflix-notify-aio";
 import { PagosService } from "app/service/pagos.service";
 import { ConceptoPagoService } from "app/service/concepto_pago.service";
-import { Report } from "notiflix";
+// import { Report } from "notiflix";
 import moment from "moment";
 import * as pdfMake from "pdfmake/build/pdfmake";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
@@ -140,11 +140,11 @@ export class TypographyComponent {
             .subscribe(() => {
               if (index === this.listaPagos.length - 1) {
                 this.formularioCobro.reset();
-                Report.success(
-                  "Éxito",
-                  "Los pagos fueron registrados con éxito",
-                  "Ok"
-                );
+                // Report.success(
+                //   "Éxito",
+                //   "Los pagos fueron registrados con éxito",
+                //   "Ok"
+                // );
                 this.listaPagos = [];
                 this.viewPagos = false;
                 this.cuotaActual = 0;

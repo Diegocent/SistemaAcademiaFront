@@ -2,16 +2,8 @@ import { Component, Input, OnInit } from "@angular/core";
 import { PersonaService } from "app/service/persona.service";
 import { AlumnoService } from "app/service/alumno.service";
 import { CursoService } from "app/service/curso.service";
-import { Notify } from "notiflix/build/notiflix-notify-aio";
-import { Report } from "notiflix/build/notiflix-report-aio";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import {
-  Alumno,
-  Curso,
-  MontoConcepto,
-  Persona,
-  PersonaAlumno,
-} from "app/models/models";
+import { Alumno, Curso, Persona } from "app/models/models";
 import { MontoConceptoService } from "app/service/monto_concepto.service";
 @Component({
   selector: "app-user-profile",
@@ -166,10 +158,13 @@ export class UserProfileComponent implements OnInit {
         .checkPersona(this.formularioRegistro.value.cedula)
         .subscribe((response) => {
           if (response) {
-            Report.failure(
-              "Error",
-              "Ya existe un/a alumno/a con el número de cédula, asegúrese de haber ingresado la cédula correctamente.",
-              "Aceptar"
+            // Report.failure(
+            //   "Error",
+            //   "Ya existe un/a alumno/a con el número de cédula, asegúrese de haber ingresado la cédula correctamente.",
+            //   "Aceptar"
+            // );
+            console.log(
+              "Ya existe un/a alumno/a con el número de cédula, asegúrese de haber ingresado la cédula correctamente."
             );
           } else {
             this.personaService
